@@ -1,0 +1,16 @@
+# vectordb 구축
+pandas==2.3.2 
+langchain-openai==0.3.8
+langchain==0.3.27
+
+# RAG
+python-dotenv==1.1.1
+psycopg2==2.9.11
+psycopg2-binary==2.9.11
+
+#langraph 구축
+langchain-core==1.0.0
+
+
+#langsmith 구축
+langsmith==0.4.37
