@@ -1,4 +1,4 @@
-# 증상을 의미하는 질문인지, 쓸데없는 질문인지 판별하는 node
+#  뽑아져 나온 chunk를 평가하는 node
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import SystemMessage
 from langchain_core.prompts import HumanMessagePromptTemplate
@@ -8,46 +8,50 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-def classify_node(input_text: str) -> dict:
+def eval_node(inputs: dict) -> dict:
     """
-    사용자의 질문이 증상과 관련된 질문인지 구분
+    뽑아져 나온 chunk(검색 결과)를 평가하는 노드
     """
-    chat_prompt = ChatPromptTemplate(
-        messages=[
-            # system 역할
-            SystemMessage(
-                content=("""
-                    당신은 의료전문가 입니다.
-                    사용자가 입력한 질문이 병원증상과 관련된 질문인지 판단합니다.
-                    증상과 관련이 없는 질문이라면 "증상과 관련된 질문을 다시 입력해 주세요" 라고 대답합니다."""
-                )
-            ),
-            # human 역할
-            HumanMessagePromptTemplate.from_template("""
-                {user_input}
-            """),
-        ]
-    )
+    # classify_node에서 전달된 질문
+    question = inputs.get("question")
+
+    # retriever 같은 노드에서 전달된 검색 결과
+    chunks = inputs.get("search_results", [])
+
+    # 상위 5개만 선택
+    top_chunks = chunks[:5]
+
+    # LLM에게 평가를 요청할 프롬프트 구성
+    chat_prompt = ChatPromptTemplate.from_messages([
+        ("system", "너는 의료 전문 어시스턴트야. 사용자의 질문과 관련성이 높은 문서를 판단해."),
+        ("human", "질문: {question}\n검색 결과:\n{chunks}\n이 중 어떤 문서가 가장 유사도가 높은가")
+    ])
+
     model = ChatOpenAI(
         model = 'gpt-5-nano',
         reasoning_effort ="low"
     )
 
-    # 체인 실행
     chain = chat_prompt | model
-    response = chain.invoke({"user_input": input_text})
-    answer = response.content.strip()
 
-    # 결과 분기
-    if "증상과 관련된 질문을 다시 입력해 주세요" in answer:
-        route = "nonsymptom"
+    # 평균 유사도 계산 (chunk에 score가 포함되어 있을 경우)
+    if top_chunks and "score" in top_chunks[0]:
+        avg_score = sum(c["score"] for c in top_chunks) / len(top_chunks)
+        top_score = top_chunks[0]["score"]
     else:
-        route = "symptom"
+        avg_score = 0
+        top_score = 0
+
+    # 기준 설정 (경험적으로 조정)
+    # - 평균 점수 0.5 미만이거나
+    # - 1위 점수가 0.65 미만이면 "관련성 낮음"
+    if top_score < 0.65 or avg_score < 0.5:
+        route = "rewrite_question"
+    else:
+        route = "generate_answer"
 
     return {
-        "question": input_text,
-        "route": route,
-        "answer": answer
+        "question": question,
+        "chunks": top_chunks,
+        "route": route
     }
-
-
