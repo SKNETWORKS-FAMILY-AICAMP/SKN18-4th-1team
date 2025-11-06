@@ -1,8 +1,5 @@
-from pathlib import Path
-import sys
 from dotenv import load_dotenv
-sys.path.append(str(Path(__file__).resolve().parents[1]))
-from Langgraph.graph import create_graph_flow
+from langgraph_structure.graph import create_graph_flow
 
 
 def main():

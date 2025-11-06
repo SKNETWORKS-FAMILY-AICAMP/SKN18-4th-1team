@@ -1,10 +1,6 @@
-# 질문이 rag에 적합한 질문이도록 다시 질문을 작성하는 node
-from pathlib import Path
-import sys
-sys.path.append(str(Path(__file__).resolve().parents[1]))
 from langchain_core.prompts import PromptTemplate
-from Langgraph.init_state import GraphState
-from Langgraph.utils import model
+from langgraph_structure.init_state import GraphState
+from langgraph_structure.utils import model
 
 def __get_prompt_for_rewriting_question():
     template = """

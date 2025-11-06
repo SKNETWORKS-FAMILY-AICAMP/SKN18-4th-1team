@@ -1,14 +1,11 @@
-from pathlib import Path
-import sys
-sys.path.append(str(Path(__file__).resolve().parents[1]))
 from langgraph.graph import StateGraph, END
-from .init_state import GraphState
-from .nodes.classify_node import classify_quit, classify_node
-from .nodes.eval_node import evaluate_chunk_node,classify_retrieval
-from .nodes.rewrite_question import question_retrive
-from .nodes.generation_llm import generation_llm_node
-from .nodes.search_hospital import search_hospital_node
-from .nodes.search_vectordb import search_node
+from langgraph_structure.init_state import GraphState
+from langgraph_structure.nodes.classify_node import classify_quit, classify_node
+from langgraph_structure.nodes.eval_node import evaluate_chunk_node,classify_retrieval
+from langgraph_structure.nodes.rewrite_question import question_retrive
+from langgraph_structure.nodes.generation_llm import generation_llm_node
+from langgraph_structure.nodes.search_hospital import search_hospital_node
+from langgraph_structure.nodes.search_vectordb import search_node
 
 
 def create_graph_flow():
