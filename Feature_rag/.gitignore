@@ -1,3 +1,5 @@
 .env
 database
 __pycache__
+.langgraph_api
+agent.egg-ingo

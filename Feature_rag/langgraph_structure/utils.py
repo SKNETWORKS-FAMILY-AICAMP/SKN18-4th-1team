@@ -1,6 +1,8 @@
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 import os
 
+def set_conn_str() -> str | None:
+    return os.getenv("CONNECTION_STRING")
 
 def set_openapi() -> str | None:
     """Return the OpenAI API key from the environment."""

@@ -31,15 +31,13 @@ class CustomPGVector(VectorStore, metaclass=Singleton):
         metadatas: Optional[List[Dict[str, Any]]] = None,
         conn_str: str = None,
         table: str = "medical_db",
+        **kwargs,
     ):
         store = cls(conn_str=conn_str, embedding_fn=embedding_fn, table=table)
         store.add_texts(texts, metadatas=metadatas)
         return store
 
-    def add_texts(
-        self,
-        texts: List[str],
-        metadatas: Optional[List[Dict[str, Any]]] = None,) -> None:
+    def add_texts(self,texts: List[str], metadatas: Optional[List[Dict[str, Any]]] = None,) -> None:
         metadatas = metadatas or [{} for _ in texts]
         embeddings = self.embedding_fn.embed_documents(texts)
 
@@ -104,7 +102,7 @@ class CustomPGVector(VectorStore, metaclass=Singleton):
 
         # 기본 SQL
         base_sql = f"""
-            SELECT content, metadata, (embedding <#> %s::vector) AS score
+            SELECT content, metadata, (1-(embedding <#> %s::vector)) AS score
             FROM {self.table}
         """
 
@@ -119,7 +117,7 @@ class CustomPGVector(VectorStore, metaclass=Singleton):
         if where_clauses:
             base_sql += " WHERE " + " AND ".join(where_clauses)
 
-        base_sql += " ORDER BY score LIMIT %s"
+        base_sql += " ORDER BY score DESC LIMIT %s"
         params.append(k)
 
         with self.conn.cursor() as cur:

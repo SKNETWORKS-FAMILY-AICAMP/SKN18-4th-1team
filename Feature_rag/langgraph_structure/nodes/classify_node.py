@@ -3,11 +3,12 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import SystemMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import HumanMessagePromptTemplate
-from langgraph_structure.graph import END
+from langgraph.graph import END
 from langgraph_structure.utils import model
 
 # 증상을 의미하는 질문인지, 쓸데없는 질문인지 판별하는 node
 def classify_node(state: GraphState) -> GraphState:
+    final_answer=""
     chat_prompt = ChatPromptTemplate(
         messages=[
             # system 역할
@@ -28,10 +29,13 @@ def classify_node(state: GraphState) -> GraphState:
     chain = chat_prompt | llm | StrOutputParser()
     response = chain.invoke({'question': state.get('question')}).strip()
     need_quit = True if response == "No" else False
-        
+    
+    if need_quit:
+        final_answer = "죄송합니다. 조금 더 상세히 설명해주시면 도와드리도록 하겠습니다."    
     return {
         **state,
-        "need_quit":need_quit
+        "need_quit":need_quit,
+        "final_answer": final_answer
     }
     
         

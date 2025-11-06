@@ -47,3 +47,5 @@ def create_graph_flow():
     return graph.compile()
 
 
+graph = create_graph_flow()
+
