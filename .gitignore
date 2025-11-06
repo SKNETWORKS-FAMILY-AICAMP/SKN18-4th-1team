@@ -328,4 +328,3 @@ $RECYCLE.BIN/
 # data
 Feature_rag/Data/*
 !Feature_rag/Data/.gitkeep
->>>>>>> dev
