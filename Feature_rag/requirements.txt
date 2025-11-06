@@ -1,0 +1,18 @@
+python-dotenv==1.2.1
+
+# rag
+pandas==2.3.3
+langchain-core
+psycopg2==2.9.11
+psycopg2-binary==2.9.11
+
+# langgraph
+langchain==1.0.3
+langchain-community==0.4.1
+langchain-openai==1.0.2
+langgraph==1.0.2
+
+langsmith==0.4.40
+
+# test
+jupyter==1.1.1
