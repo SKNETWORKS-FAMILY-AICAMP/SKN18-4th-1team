@@ -325,6 +325,7 @@ $RECYCLE.BIN/
 # ETC
 .history
 
-# Data
-Data/*
-!Data/.gitkeep
+# data
+Feature_rag/Data/*
+!Feature_rag/Data/.gitkeep
+>>>>>>> dev
