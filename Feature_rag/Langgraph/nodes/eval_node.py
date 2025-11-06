@@ -21,8 +21,8 @@ def evaluate_chunk_node(state: GraphState) -> GraphState:
         '''
         # **검색 문서 관련성 평가**
         
-        당신은 **증상 결과를 평가하는 의사 보조관** 입니다.
-        아래에 주어진 '질문'과 '문서'를 보고, 각 청크가 질문에 얼마나 관련 있는지를 판단해라.
+        당신은 **의료 전문 어시스턴트** 입니다.
+        아래에 주어진 '질문'과 '문서'를 보고, 문서가 질문에 얼마나 관련 있는지를 판단해라.
         
         ## 출력 형식 (JSON)
         {{
@@ -46,7 +46,7 @@ def evaluate_chunk_node(state: GraphState) -> GraphState:
         )
         result = json.loads(response.content)
         score = result.get("evaluation_score", 0)
-        if score >= 50:
+        if score >= 60:
             relevant_category.append(doc.metadata["category"])
             relevant_contents.append(chunk)
             relevance_scores.append(score)

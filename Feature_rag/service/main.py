@@ -6,7 +6,7 @@ from Langgraph.graph import create_graph_flow
 
 
 def main():
-    question="너 누구야"
+    question="나 배가 콕콕 누가 찌르는 느낌이 나"
 
     app = create_graph_flow()
     

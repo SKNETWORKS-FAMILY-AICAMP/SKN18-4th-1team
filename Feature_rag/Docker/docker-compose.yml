@@ -11,7 +11,7 @@ services:
                      # 컨테이너 비정상 종료 시 항상 재시작
     environment:
       POSTGRES_DB: ${PGDATABASE:-medical_db}
-      POSTGRES_USER: ${PGUSER:-mdical}
+      POSTGRES_USER: ${PGUSER:-medical}
       POSTGRES_PASSWORD: ${PGPASSWORD:-medical1234}
     ports:
       - "${PGPORT:-5432}:5432"     # 호스트 포트:컨테이너 포트 (기본 PostgreSQL 포트 5432)
