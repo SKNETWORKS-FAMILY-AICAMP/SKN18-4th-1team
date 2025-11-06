@@ -1,14 +1,10 @@
-from pathlib import Path
-import sys
-sys.path.append(str(Path(__file__).resolve().parents[1]))
-
-from Langgraph.init_state import GraphState
+from langgraph_structure.init_state import GraphState
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import SystemMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import HumanMessagePromptTemplate
-from Langgraph.graph import END
-from Langgraph.utils import model
+from langgraph_structure.graph import END
+from langgraph_structure.utils import model
 
 # 증상을 의미하는 질문인지, 쓸데없는 질문인지 판별하는 node
 def classify_node(state: GraphState) -> GraphState:

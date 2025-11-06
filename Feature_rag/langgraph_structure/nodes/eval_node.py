@@ -1,10 +1,7 @@
-from pathlib import Path
-import sys
-sys.path.append(str(Path(__file__).resolve().parents[1]))
 from langchain_core.prompts import PromptTemplate
-from Langgraph.init_state import GraphState
-from langgraph.graph import END
-from Langgraph.utils import model
+from langgraph_structure.init_state import GraphState
+from langgraph_structure.graph import END
+from langgraph_structure.utils import model
 import json
 
 def evaluate_chunk_node(state: GraphState) -> GraphState:
