@@ -2,7 +2,7 @@
 CREATE EXTENSION IF NOT EXISTS vector;
 
 -- 법률 판례 문서 테이블 생성
-CREATE TABLE IF NOT EXISTS law_table (
+CREATE TABLE IF NOT EXISTS medical_table (
     id SERIAL PRIMARY KEY,
     content TEXT NOT NULL,              -- 의료 지식
     embedding VECTOR(3072),              -- 임베딩 모델의 차원

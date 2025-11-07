@@ -17,7 +17,7 @@ class Singleton(type(VectorStore)):
 
 
 class CustomPGVector(VectorStore, metaclass=Singleton):
-    def __init__(self, conn_str, embedding_fn, table: str = "law_table"):
+    def __init__(self, conn_str, embedding_fn, table: str = "medical_table"):
         self.conn_str = conn_str
         self.conn = psycopg2.connect(self.conn_str)
         self.embedding_fn = embedding_fn
@@ -31,7 +31,6 @@ class CustomPGVector(VectorStore, metaclass=Singleton):
         metadatas: Optional[List[Dict[str, Any]]] = None,
         conn_str: str = None,
         table: str = "medical_db",
-        **kwargs,
     ):
         store = cls(conn_str=conn_str, embedding_fn=embedding_fn, table=table)
         store.add_texts(texts, metadatas=metadatas)
