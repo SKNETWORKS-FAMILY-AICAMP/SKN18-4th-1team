@@ -34,7 +34,7 @@ def evaluate_chunk_node(state: GraphState) -> GraphState:
         {chunk}
         '''
     )
-    llm = model("gpt-4o-mini", temperature=0.0)
+    llm = model("gpt-5-nano", temperature=0.0)
     chain = relevance_prompt | llm
     for doc in state.get("search_document"):
         chunk = doc.page_content
@@ -73,3 +73,5 @@ def classify_retrieval(state: GraphState) -> str:
     if state["retrieval_question"]:
         return END if state.get("max_token") else "rewrite_question_node"
     return "search_hospital_node"
+
+
