@@ -1,0 +1,843 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.6;
+    color: #334155;
+}
+
+.min-h-screen {
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Background Gradient */
+.bg-gradient {
+    background: linear-gradient(to bottom right, #e0f2fe, #cffafe, #d1fae5);
+    position: relative;
+}
+
+/* Floating Particles */
+.particles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.particles::before,
+.particles::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.4), rgba(6, 182, 212, 0.4));
+    border-radius: 50%;
+    animation: float 20s infinite;
+}
+
+.particles::before {
+    left: 20%;
+    top: 30%;
+    animation-delay: 0s;
+}
+
+.particles::after {
+    left: 70%;
+    top: 60%;
+    animation-delay: 5s;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.4;
+    }
+    50% {
+        transform: translate(100px, -100px) scale(1.5);
+        opacity: 0.7;
+    }
+}
+
+/* Gradient Overlay */
+.gradient-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at top, rgba(16, 185, 129, 0.4), transparent);
+    pointer-events: none;
+}
+
+/* Container */
+.container {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 1.5rem;
+    position: relative;
+    z-index: 10;
+}
+
+/* Header */
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
+    animation: fadeInDown 0.8s ease-out;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.medical-cross {
+    width: 80px;
+    height: 80px;
+    position: relative;
+    animation: pulse 3s infinite;
+}
+
+.cross-vertical,
+.cross-horizontal {
+    position: absolute;
+    background: #10b981;
+    border-radius: 4px;
+}
+
+.cross-vertical {
+    width: 16px;
+    height: 50px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    animation: scaleY 0.5s ease-out;
+}
+
+.cross-horizontal {
+    width: 50px;
+    height: 16px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    animation: scaleX 0.5s ease-out 0.2s both;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes scaleY {
+    from {
+        transform: translate(-50%, -50%) scaleY(0);
+    }
+    to {
+        transform: translate(-50%, -50%) scaleY(1);
+    }
+}
+
+@keyframes scaleX {
+    from {
+        transform: translate(-50%, -50%) scaleX(0);
+    }
+    to {
+        transform: translate(-50%, -50%) scaleX(1);
+    }
+}
+
+.stethoscope-icon {
+    color: #059669;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 600;
+    background: linear-gradient(to right, #059669, #0891b2, #2563eb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.subtitle {
+    color: #475569;
+    margin-bottom: 1.5rem;
+    animation: fadeIn 0.8s ease-out 0.3s both;
+}
+
+.decorative-icons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.icon-item {
+    font-size: 1.5rem;
+    animation: fadeInScale 0.5s ease-out;
+    transition: transform 0.3s;
+}
+
+.icon-item:nth-child(1) { animation-delay: 0.5s; }
+.icon-item:nth-child(2) { animation-delay: 0.6s; }
+.icon-item:nth-child(3) { animation-delay: 0.7s; }
+.icon-item:nth-child(4) { animation-delay: 0.8s; }
+
+.icon-item:hover {
+    transform: scale(1.2) rotate(360deg);
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Alert Box */
+.alert-box {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(24px);
+    border: 1px solid #6ee7b7;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: start;
+    gap: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    animation: fadeInUp 0.6s ease-out 0.4s both;
+}
+
+.error-box {
+    border-color: #f87171;
+    background: rgba(254, 242, 242, 0.7);
+}
+
+.alert-icon {
+    font-size: 1.25rem;
+    color: #059669;
+    flex-shrink: 0;
+}
+
+.alert-text {
+    color: #475569;
+    font-size: 0.875rem;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Card */
+.card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(40px);
+    border: 1px solid #6ee7b7;
+    border-radius: 1rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    position: relative;
+    animation: fadeInUp 0.6s ease-out 0.5s both;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom right, rgba(16, 185, 129, 0.1), transparent);
+    pointer-events: none;
+}
+
+.input-card {
+    margin-bottom: 2rem;
+}
+
+.card-header {
+    padding: 1.5rem;
+    position: relative;
+}
+
+.card-title {
+    color: #047857;
+    font-size: 1.25rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.sparkle-icon {
+    font-size: 1.25rem;
+}
+
+.card-description {
+    color: #64748b;
+    font-size: 0.875rem;
+}
+
+.card-content {
+    padding: 1.5rem;
+    position: relative;
+}
+
+/* Textarea */
+.symptoms-textarea {
+    width: 100%;
+    min-height: 8rem;
+    padding: 1rem;
+    border: 1px solid #6ee7b7;
+    border-radius: 0.5rem;
+    background: white;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    transition: all 0.3s;
+    margin-bottom: 1rem;
+}
+
+.symptoms-textarea:focus {
+    outline: none;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.symptoms-textarea::placeholder {
+    color: #94a3b8;
+}
+
+/* Analyze Button */
+.analyze-button {
+    width: 100%;
+    padding: 1rem 2rem;
+    background: linear-gradient(to right, #10b981, #06b6d4, #3b82f6);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+    box-shadow: 0 20px 25px -5px rgba(16, 185, 129, 0.3);
+}
+
+.analyze-button:hover:not(:disabled) {
+    background: linear-gradient(to right, #059669, #0891b2, #2563eb);
+    transform: scale(1.02);
+}
+
+.analyze-button:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.analyze-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.button-icon {
+    font-size: 1rem;
+}
+
+/* Loading Section */
+.loading-section {
+    margin-bottom: 1.5rem;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.loading-content {
+    padding: 3rem;
+    text-align: center;
+}
+
+.loading-animation {
+    margin-bottom: 1.5rem;
+}
+
+.stethoscope-loader {
+    display: inline-block;
+    animation: rotate 3s linear infinite;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-title {
+    color: #047857;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
+.pulse-wave {
+    width: 100%;
+    height: 3rem;
+    margin: 2rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.pulse-wave::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 2px;
+    background: #10b981;
+    top: 50%;
+    left: 0;
+    animation: pulseWave 4s linear infinite;
+}
+
+@keyframes pulseWave {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.loading-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    max-width: 28rem;
+    margin: 2rem auto 0;
+}
+
+.loading-item {
+    background: #ecfdf5;
+    border: 1px solid #6ee7b7;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    animation: pulseOpacity 1.5s infinite;
+}
+
+.loading-item:nth-child(2) {
+    animation-delay: 0.75s;
+}
+
+@keyframes pulseOpacity {
+    0%, 100% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+.loading-item-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.loading-item p {
+    color: #64748b;
+    font-size: 0.875rem;
+}
+
+/* Results Section */
+.results-section {
+    animation: fadeIn 0.5s ease-out;
+    scroll-margin-top: 2rem;
+}
+
+.success-card {
+    margin-bottom: 1.5rem;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(40px);
+    border: 1px solid #6ee7b7;
+}
+
+.success-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+.heart-icon,
+.dna-icon {
+    font-size: 3rem;
+    animation: scalePulse 1s infinite;
+}
+
+@keyframes scalePulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.15);
+    }
+}
+
+.success-text {
+    text-align: center;
+}
+
+.success-text h3 {
+    color: #047857;
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+}
+
+.success-text p {
+    color: #64748b;
+}
+
+/* Section Title */
+.section-title {
+    color: #047857;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-icon {
+    font-size: 1.5rem;
+    animation: rotateSlow 2s infinite;
+}
+
+@keyframes rotateSlow {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(10deg);
+    }
+    75% {
+        transform: rotate(-10deg);
+    }
+}
+
+.diseases-section,
+.hospitals-section {
+    margin-bottom: 1.5rem;
+}
+
+.diseases-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.hospitals-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+/* Disease Card */
+.disease-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(40px);
+    border: 1px solid #6ee7b7;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.disease-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 25px 50px -12px rgba(16, 185, 129, 0.3);
+}
+
+.disease-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.disease-card:hover::before {
+    opacity: 1;
+}
+
+.disease-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.disease-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.severity-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: white;
+    border: none;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.severity-low {
+    background: linear-gradient(to right, #10b981, #14b8a6);
+    box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.5);
+}
+
+.severity-medium {
+    background: linear-gradient(to right, #f59e0b, #f97316);
+    box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.5);
+}
+
+.severity-high {
+    background: linear-gradient(to right, #ef4444, #ec4899);
+    box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.5);
+}
+
+.disease-description {
+    color: #64748b;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.disease-recommendations {
+    position: relative;
+    z-index: 1;
+}
+
+.recommendations-title {
+    color: #475569;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.recommendations-list {
+    list-style: none;
+    padding: 0;
+}
+
+.recommendation-item {
+    display: flex;
+    align-items: start;
+    gap: 0.5rem;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+}
+
+.recommendation-item::before {
+    content: '✦';
+    color: #10b981;
+    margin-top: 0.25rem;
+}
+
+/* Hospital Card */
+.hospital-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(40px);
+    border: 1px solid #67e8f9;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.hospital-card:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 25px 50px -12px rgba(6, 182, 212, 0.3);
+}
+
+.hospital-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom right, rgba(6, 182, 212, 0.1), rgba(59, 130, 246, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.hospital-card:hover::before {
+    opacity: 1;
+}
+
+.hospital-header {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 1rem;
+    padding-right: 2rem;
+}
+
+.hospital-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.hospital-specialty {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid #10b981;
+    border-radius: 9999px;
+    color: #047857;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+.hospital-info {
+    position: relative;
+    z-index: 1;
+}
+
+.hospital-detail {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #475569;
+    margin-bottom: 0.75rem;
+}
+
+.hospital-detail-icon {
+    width: 1rem;
+    height: 1rem;
+    color: #0891b2;
+}
+
+.hospital-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.75rem;
+    border-top: 1px solid #e2e8f0;
+    margin-top: 0.75rem;
+    position: relative;
+    z-index: 1;
+}
+
+.medical-cross-icon {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 24px;
+    height: 24px;
+    position: relative;
+    animation: pulse 2s infinite;
+}
+
+.medical-cross-icon::before,
+.medical-cross-icon::after {
+    content: '';
+    position: absolute;
+    background: #10b981;
+    border-radius: 2px;
+}
+
+.medical-cross-icon::before {
+    width: 6px;
+    height: 24px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.medical-cross-icon::after {
+    width: 24px;
+    height: 6px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .logo-container {
+        flex-wrap: wrap;
+    }
+
+    .hospitals-list {
+        grid-template-columns: 1fr;
+    }
+
+    .loading-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
