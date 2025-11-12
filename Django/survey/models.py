@@ -40,5 +40,12 @@ class SurveyResponse(models.Model):
         verbose_name="지병"
     )
 
+    address = models.CharField(
+        max_length=255, 
+        blank=True, 
+        null=True, 
+        verbose_name="주소"
+    )
+
     def __str__(self):
         return f"{self.user.username}의 설문"
