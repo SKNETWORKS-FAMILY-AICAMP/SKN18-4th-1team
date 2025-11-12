@@ -72,4 +72,4 @@ def evaluate_chunk_node(state: GraphState) -> GraphState:
 def classify_retrieval(state: GraphState) -> str:
     if state["retrieval_question"]:
         return END if state.get("max_token") else "rewrite_question_node"
-    return "search_hospital_node"
+    return "judgment_symtom_node"

@@ -1,11 +1,9 @@
 from typing import Any, Dict, List, Optional, Tuple
 import json
-
 from psycopg2.extras import Json
-import psycopg2
-
 from langchain_core.vectorstores import VectorStore
 from langchain_core.documents import Document
+from langgraph_structure.utils import pool
 
 class Singleton(type(VectorStore)):
     _instances: Dict[type, VectorStore] = {}
@@ -19,10 +17,16 @@ class Singleton(type(VectorStore)):
 class CustomPGVector(VectorStore, metaclass=Singleton):
     def __init__(self, conn_str, embedding_fn, table: str = "medical_table"):
         self.conn_str = conn_str
-        self.conn = psycopg2.connect(self.conn_str)
+        self.conn = pool.getconn()
         self.embedding_fn = embedding_fn
         self.table = table
-
+    
+    def __del__(self):
+        try:
+            pool.putconn(self.conn)  # 반납
+        except:
+            pass
+        
     @classmethod
     def from_texts(
         cls,
@@ -31,7 +35,6 @@ class CustomPGVector(VectorStore, metaclass=Singleton):
         metadatas: Optional[List[Dict[str, Any]]] = None,
         conn_str: str = None,
         table: str = "medical_db",
-        **kwargs,
     ):
         store = cls(conn_str=conn_str, embedding_fn=embedding_fn, table=table)
         store.add_texts(texts, metadatas=metadatas)
@@ -76,7 +79,7 @@ class CustomPGVector(VectorStore, metaclass=Singleton):
             sql_query_template += " WHERE " + " AND ".join(where_clauses)
 
         sql_query_template += """
-            ORDER BY embedding <#> %s::vector
+            ORDER BY (1-(embedding <=> %s::vector))
             LIMIT %s
         """
         params.append(query_emb)
@@ -102,7 +105,7 @@ class CustomPGVector(VectorStore, metaclass=Singleton):
 
         # 기본 SQL
         base_sql = f"""
-            SELECT content, metadata, (1-(embedding <#> %s::vector)) AS score
+            SELECT content, metadata, (1-(embedding <=> %s::vector)) AS score
             FROM {self.table}
         """
 
