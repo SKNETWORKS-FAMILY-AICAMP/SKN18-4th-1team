@@ -7,12 +7,11 @@ User = get_user_model()
 class CustomUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = ("username", "email", "name", "nickname")
+        fields = ("username", "email", "name")
         labels = {
             "username": "아이디",
             "email": "이메일",
             "name": "이름",
-            "nickname": "닉네임",
         }
         help_texts = {
             "username": "",
