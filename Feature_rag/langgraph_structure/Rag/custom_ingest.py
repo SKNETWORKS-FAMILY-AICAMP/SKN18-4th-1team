@@ -5,9 +5,8 @@ from typing import List
 
 
 class VectorIngest():
-    def __init__(self, conn_str, embedding_fn, 
+    def __init__(self, embedding_fn, 
                 file_path, content_column:str, metadata_columns:List[str], batch_size:int=500):
-        self.conn_str = conn_str
         self.embedding_fn = embedding_fn
         self.file_path= file_path
         self.content_column = content_column
@@ -31,7 +30,6 @@ class VectorIngest():
     def _create_pgvector_store(self) -> None:
         """PGVector 스토어 생성"""
         self.vectorstore = CustomPGVector( 
-                            conn_str=self.conn_str, 
                             embedding_fn=self.embedding_fn)
         return self.vectorstore
 

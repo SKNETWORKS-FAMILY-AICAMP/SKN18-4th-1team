@@ -15,17 +15,19 @@ class Singleton(type(VectorStore)):
 
 
 class CustomPGVector(VectorStore, metaclass=Singleton):
-    def __init__(self, conn_str, embedding_fn, table: str = "medical_table"):
-        self.conn_str = conn_str
+    def __init__(self, embedding_fn, table: str = "medical_table"):
         self.conn = pool.getconn()
         self.embedding_fn = embedding_fn
         self.table = table
     
     def __del__(self):
         try:
-            pool.putconn(self.conn)  # 반납
+            pool.putconn(self.conn)
         except:
             pass
+    
+    def get_connection(self):
+        return self.conn
         
     @classmethod
     def from_texts(
@@ -33,10 +35,9 @@ class CustomPGVector(VectorStore, metaclass=Singleton):
         texts: List[str],
         embedding_fn,
         metadatas: Optional[List[Dict[str, Any]]] = None,
-        conn_str: str = None,
-        table: str = "medical_db",
+        table: str = "medical_db"
     ):
-        store = cls(conn_str=conn_str, embedding_fn=embedding_fn, table=table)
+        store = cls(embedding_fn=embedding_fn, table=table)
         store.add_texts(texts, metadatas=metadatas)
         return store
 

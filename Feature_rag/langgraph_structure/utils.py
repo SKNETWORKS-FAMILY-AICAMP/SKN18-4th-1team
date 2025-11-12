@@ -32,3 +32,10 @@ pool = SimpleConnectionPool(
     maxconn=5,
     dsn=set_conn_str()
 )
+
+def close_pool():
+    """모든 DB 연결을 안전하게 닫음"""
+    try:
+        pool.closeall()
+    except Exception as e:
+        print(f"⚠️ Connection pool close failed: {e}")
