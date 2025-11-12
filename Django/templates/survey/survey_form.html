@@ -1,0 +1,27 @@
+<h2>서비스 이용 전 설문</h2>
+<p>더 정확한 챗봇 답변을 위해 아래 정보를 입력해주세요.</p>
+
+<form method="post">
+    {% csrf_token %} {{ form.as_p }} <button type="submit">제출하기</button>
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const genderSelect = document.getElementById("id_gender"); // 폼 필드의 id
+        const pregnantField = document.querySelector("label[for='id_is_pregnant']").parentNode;
+
+        function togglePregnantField() {
+            if (genderSelect.value === 'F') { // '여성'을 선택했을 때
+                pregnantField.style.display = "";
+            } else {
+                pregnantField.style.display = "none";
+            }
+        }
+
+        // 페이지 로드 시
+        togglePregnantField();
+        
+        // 성별 변경 시
+        genderSelect.addEventListener("change", togglePregnantField);
+    });
+</script>

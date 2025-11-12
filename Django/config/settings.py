@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.naver',
     'medical_app',
     'user_app.apps.UserConfig',
+    'medical_app',
+    'survey',
+    'user_app',
 ]
 
 MIDDLEWARE = [
