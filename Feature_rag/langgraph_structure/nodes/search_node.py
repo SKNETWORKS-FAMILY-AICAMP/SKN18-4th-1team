@@ -9,7 +9,7 @@ def search_vectordb(state: GraphState) -> GraphState:
     search_chunks=[]
     mean_similarity_score = 0.0
     embed = set_embedding_model()
-    vectorstore = CustomPGVector(conn_str=set_conn_str(), embedding_fn=embed)
+    vectorstore = CustomPGVector(embedding_fn=embed)
     question = state.get("question","") # 추후 수정필요
     filter = state.get("department", "")
     if not filter and filter=="기타 ":

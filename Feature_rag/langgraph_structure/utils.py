@@ -1,4 +1,6 @@
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from dotenv import load_dotenv
+load_dotenv()
 import os
 from psycopg2.pool import SimpleConnectionPool # 미리 DB객체 생성해놓기 
 from functools import lru_cache # embedding 객체 한번만

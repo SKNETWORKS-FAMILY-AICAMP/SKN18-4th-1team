@@ -1,3 +1,5 @@
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -9,7 +11,7 @@ def main():
     
     VectorIngest(
         embedding_fn = set_embedding_model(),
-        file_path = ".\Data\disease.csv",
+        file_path = "./Data/disease.csv",
         content_column = "content",
         metadata_columns = ["disease_name", "domain", "source_spec"]
     )()
