@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI 의료 상담{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="layout-body">
+    {% with current=request.resolver_match.url_name|default:'' %}
+    <nav class="global-nav">
+        <div class="nav-right">
+            {% if current != 'home' %}
+                <a class="nav-btn ghost" href="{% url 'medical_app:home' %}">홈</a>
+            {% endif %}
+            {% if current != 'index' %}
+                <a class="nav-btn ghost" href="{% url 'medical_app:index' %}">상담하기</a>
+            {% endif %}
+            {% if request.user.is_authenticated %}
+                <a class="nav-btn ghost" href="{% url 'accounts:account_profile' %}">마이페이지</a>
+                <form method="post" action="{% url 'account_logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="nav-btn danger">로그아웃</button>
+                </form>
+            {% else %}
+                {% if current != 'account_login' and current != 'login' %}
+                    <a class="nav-btn ghost" href="{% url 'account_login' %}">로그인</a>
+                {% endif %}
+                {% if current != 'signup' and current != 'account_signup' %}
+                    <a class="nav-btn primary" href="{% url 'accounts:signup' %}">회원가입</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </nav>
+    {% endwith %}
+
+    <main class="layout-main">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

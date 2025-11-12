@@ -1,0 +1,96 @@
+{% extends "layout/base.html" %}
+{% load static %}
+{% load account socialaccount %}
+
+{% block title %}회원가입{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="auth-page signup-page">
+    <div class="auth-hero">
+        <div class="logo-badge" aria-hidden="true">
+            <span class="logo-cross"></span>
+        </div>
+        <div class="hero-text">
+            <p class="hero-title">AI 의료 상담 시스템</p>
+            <p class="hero-subtitle">맞춤형 상담을 위해 계정을 생성하세요</p>
+        </div>
+    </div>
+
+    <div class="auth-card">
+        <div class="card-head">
+            <p class="card-title">회원가입</p>
+            <p class="card-subtitle">필요한 정보를 입력한 뒤 가입을 완료하세요</p>
+        </div>
+
+        {% if form.errors %}
+        <div class="form-errors" role="alert">
+            {% for field in form.visible_fields %}
+                {% for error in field.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" class="auth-form" action="">
+            {% csrf_token %}
+            {% for field in form.hidden_fields %}
+                {{ field }}
+            {% endfor %}
+
+            {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+            {% endif %}
+
+            {% for field in form.visible_fields %}
+            <div class="input-field{% if field.errors %} has-error{% endif %}">
+                <label class="field-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                <div class="field-box">
+                    {{ field }}
+                </div>
+                {% if field.help_text %}
+                <p class="field-help">{{ field.help_text|safe }}</p>
+                {% endif %}
+                {% if field.errors %}
+                    {% for error in field.errors %}
+                    <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="auth-btn">회원가입</button>
+        </form>
+
+        {% get_providers as socialaccount_providers %}
+        {% if socialaccount_providers %}
+        <div class="social-section">
+            <p class="social-label">또는 소셜 계정으로 간편 가입</p>
+            <div class="social-buttons">
+                {% include "socialaccount/snippets/provider_list.html" with process="signup" %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <p class="auth-switch">
+        이미 계정이 있으신가요?
+        <a href="{% url 'account_login' %}">로그인</a>
+    </p>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.body.classList.add('login-body');
+    });
+</script>
+{% endblock %}

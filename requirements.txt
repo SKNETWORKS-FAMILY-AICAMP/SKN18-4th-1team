@@ -16,3 +16,12 @@ tavily-python==0.7.10 #  AI가 웹 검색을 할 수 있게 해주는 도구
 # 모델별 패키지
 langchain-ollama==0.3.4 # Ollama 모델 통합
 langchain-openai==0.3.8 # OpenAI 모델 통합
+
+# django 패키지
+django
+django-allauth>=0.63.0
+PyJWT>=2.8.0
+cryptography
+
+# postgresql 연동 패키지
+psycopg2

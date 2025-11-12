@@ -1,0 +1,112 @@
+{% extends "layout/base.html" %}
+{% load static %}
+{% load account socialaccount %}
+
+{% block title %}로그인{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="login-page">
+    <div class="login-hero">
+        <div class="logo-badge" aria-hidden="true">
+            <span class="logo-cross"></span>
+        </div>
+        <div class="hero-text">
+            <p class="hero-title">AI 의료 상담 시스템</p>
+            <p class="hero-subtitle">로그인하여 맞춤형 건강 상담을 받아보세요</p>
+        </div>
+    </div>
+
+    <div class="login-card">
+        <div class="card-head">
+            <p class="card-title">로그인</p>
+            <p class="card-subtitle">이메일과 비밀번호를 입력해주세요</p>
+        </div>
+
+        {% if form.errors %}
+        <div class="form-errors" role="alert">
+            {% for field in form.visible_fields %}
+                {% for error in field.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST" class="login-form">
+            {% csrf_token %}
+            {% for field in form.hidden_fields %}
+                {{ field }}
+            {% endfor %}
+            {% if form.remember %}
+                <div class="sr-only">
+                    {{ form.remember }}
+                </div>
+            {% endif %}
+
+            <label class="input-field" for="id_login">
+                <span class="field-label">이메일</span>
+                <div class="field-box">
+                    <span class="input-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" focusable="false">
+                            <path d="M2 6.5A2.5 2.5 0 0 1 4.5 4h15A2.5 2.5 0 0 1 22 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 17.5z" fill="none" stroke-width="1.7" stroke-linecap="round"/>
+                            <path d="m3 7 9 6 9-6" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <input
+                        type="email"
+                        name="{{ form.login.name }}"
+                        id="id_login"
+                        placeholder="example@email.com"
+                        value="{{ form.login.value|default_if_none:'' }}"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
+            </label>
+
+            <label class="input-field" for="id_password">
+                <span class="field-label">비밀번호</span>
+                <div class="field-box">
+                    <span class="input-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" focusable="false">
+                            <rect x="4" y="10" width="16" height="10" rx="2" ry="2" fill="none" stroke-width="1.7"/>
+                            <path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke-width="1.7"/>
+                        </svg>
+                    </span>
+                    <input
+                        type="password"
+                        name="{{ form.password.name }}"
+                        id="id_password"
+                        placeholder="••••••••"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+            </label>
+
+            <button type="submit" class="login-btn">로그인</button>
+        </form>
+    </div>
+
+    <p class="signup-link">
+        계정이 없으신가요?
+        <a href="{% url 'accounts:signup' %}">회원가입</a>
+    </p>
+    <a class="home-return-btn" href="{% url 'medical_app:home' %}">홈페이지로 돌아가기</a>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.body.classList.add('login-body');
+    });
+</script>
+{% endblock %}

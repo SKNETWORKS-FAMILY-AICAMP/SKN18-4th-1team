@@ -1,0 +1,127 @@
+{% extends "layout/base.html" %}
+{% load static %}
+
+{% block title %}AI 의료 상담 - 상담하기{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient">
+    <div class="particles"></div>
+    <div class="gradient-overlay"></div>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <div class="logo-badge logo-hero" aria-hidden="true">
+                    <span class="logo-cross"></span>
+                </div>
+                <h1 class="title">AI 의료 상담 시스템</h1>
+            </div>
+            <p class="subtitle">증상을 입력하면 AI가 관련 질병과 추천 병원을 분석해드립니다</p>
+        </div>
+
+        <div class="alert-box">
+            <div class="alert-icon">ℹ️</div>
+            <div class="alert-text">
+                이 서비스는 참고용이며 전문 의료 진단을 대체할 수 없습니다. 심각한 증상이 있다면 즉시 병원을 방문하세요.
+            </div>
+        </div>
+
+        {% if error %}
+        <div class="alert-box error-box">
+            <div class="alert-icon">⚠️</div>
+            <div class="alert-text">{{ error }}</div>
+        </div>
+        {% endif %}
+
+        <div class="card input-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span class="sparkle-icon">✨</span>
+                    증상 입력
+                </div>
+                <div class="card-description">
+                    현재 느끼시는 증상을 자세히 설명해주세요
+                </div>
+            </div>
+            <div class="card-content">
+                <form method="POST" action="{% url 'medical_app:index' %}">
+                    {% csrf_token %}
+                    <textarea
+                        name="symptoms"
+                        class="symptoms-textarea"
+                        placeholder="예: 어제부터 두통이 있고 미열이 있습니다..."
+                        rows="6"
+                        required
+                    >{{ symptoms }}</textarea>
+                    <button type="submit" class="analyze-button">
+                        <span class="button-icon">✨</span>
+                        <span class="button-text">증상 분석하기</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        {% if result %}
+        <div id="results" class="results-section">
+            <div class="card success-card">
+                <div class="success-content">
+                    <div class="heart-icon">❤️</div>
+                    <div class="success-text">
+                        <h3>분석 완료!</h3>
+                        <p>아래에서 결과를 확인하세요</p>
+                    </div>
+                    <div class="dna-icon">🧬</div>
+                </div>
+            </div>
+
+            <div class="card results-card">
+                <div class="results-grid">
+                    <div class="results-column">
+                        <h3>가능성 있는 질병</h3>
+                        <div class="disease-list">
+                            {% for disease in result.diseases %}
+                            <div class="disease-card severity-{{ disease.severity }}">
+                                <div class="disease-header">
+                                    <h4>{{ disease.name }}</h4>
+                                    <span class="severity">{{ disease.severity|upper }}</span>
+                                </div>
+                                <p>{{ disease.description }}</p>
+                                <div class="recommendations">
+                                    <h5>권장사항</h5>
+                                    <ul>
+                                        {% for rec in disease.recommendations %}
+                                        <li>{{ rec }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="results-column">
+                        <h3>추천 병원</h3>
+                        <div class="hospital-list">
+                            {% for hospital in result.hospitals %}
+                            <div class="hospital-card">
+                                <div class="hospital-header">
+                                    <h4>{{ hospital.name }}</h4>
+                                    <span class="specialty">{{ hospital.specialty }}</span>
+                                </div>
+                                <div class="hospital-info">
+                                    <p><strong>거리:</strong> {{ hospital.distance }}</p>
+                                    <p><strong>대기 시간:</strong> {{ hospital.waitTime }}</p>
+                                    <p><strong>주소:</strong> {{ hospital.address }}</p>
+                                    <p><strong>전화:</strong> {{ hospital.phone }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
