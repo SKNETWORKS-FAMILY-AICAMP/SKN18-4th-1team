@@ -6,7 +6,7 @@ def __get_prompt_for_rewriting_question():
     template = """
     # **질문 재작성 작업**
 
-    당신은 **RAG 검색 품질 개선 전문가**입니다.
+    당신은 **RAG 검색 시스템의 질문 개선 전문가**입니다.
     사용자의 질문을 벡터DB 검색에 최적화된 문장으로 **한국어로 재작성**하세요.
 
     ## 참고 자료
@@ -22,8 +22,8 @@ def __get_prompt_for_rewriting_question():
 
     ---
     # 출력 형식
-    - 오직 하나의 재작성된 문장만 출력합니다.
-    - 설명이나 추가 문구 없이 질문만 작성합니다.
+    - 질문은 반드시 하나의 완전한 문장으로 작성하세요.
+    - 불필요한 감정 표현, 문장 부호, 조사 등을 제거해주세요.
     """
 
     return PromptTemplate.from_template(template)
