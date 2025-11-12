@@ -169,7 +169,7 @@ function getSeverityLabel(severity) {
         'medium': '중등도',
         'high': '중증'
     };
-    return labels[severity] || '알 수 없음';
+    return labels[severity] || '예정 없음';
 }
 
 // Scroll to results when they appear

@@ -77,11 +77,16 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "medical_db",
+        "USER": "medical",
+        "PASSWORD": "medical1234",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
+
 
 
 # Password validation
@@ -139,7 +144,7 @@ AUTHENTICATION_BACKENDS = [
 LOGIN_REDIRECT_URL = 'medical_app:home'
 LOGOUT_REDIRECT_URL = 'medical_app:home'
 
-ACCOUNT_LOGIN_METHODS = ['username', 'email']
+ACCOUNT_LOGIN_METHODS = ['username']
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 

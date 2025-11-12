@@ -23,9 +23,13 @@ class CustomUserChangeForm(UserChangeForm):
 
     class Meta:
         model = User
-        fields = ("name", "email", "nickname")
+        fields = ("name", "email", "address", "height", "weight", "pregnancy", "disease_history")
         labels = {
             "name": "이름",
             "email": "이메일",
-            "nickname": "닉네임",
+            "address": "주소",
+            "height": "키(cm)",
+            "weight": "몸무게(kg)",
+            "pregnancy": "임신 여부",
+            "disease_history": "기존 질병 이력",
         }

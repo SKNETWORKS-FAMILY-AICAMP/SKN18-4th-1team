@@ -4,214 +4,76 @@
 {% block title %}프로필 수정{% endblock %}
 
 {% block content %}
-<div class="mypage-container">
-    <h1>프로필 수정</h1>
- 
-    {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-            {% if message.tags == 'success' and '로그아웃' not in message.message and '로그인' not in message.message %}
-            <div class="alert alert-{{ message.tags }}">
-                {{ message }}
+<section class="mypage-wrapper profile-edit-wrapper">
+    <div class="profile-card edit-card">
+        <div class="section-header">
+            <div>
+                <p class="section-label">내 정보</p>
+                <h2>프로필 수정</h2>
             </div>
-            {% endif %}
-        {% endfor %}
-    </div>
-    {% endif %}
-    
-    <script>
-    // 페이지 로드 후 메시지를 삭제
-    document.addEventListener('DOMContentLoaded', function() {
-        // 3초 후 메시지 숨기기
-        setTimeout(function() {
-            const messages = document.querySelector('.messages');
-            if (messages) {
-                messages.style.display = 'none';
-            }
-        }, 3000);
-    });
-    </script>
-    
-    <form method="post" class="profile-edit-form">
-        {% csrf_token %}
-        
-        {% if form.errors %}
-        <div class="error-message">
-            {% for field in form %}
-                {% for error in field.errors %}
-                    <p>{{ error }}</p>
-                {% endfor %}
+        </div>
+
+        {% if messages %}
+        <div class="flash-messages">
+            {% for message in messages %}
+                {% if message.tags == 'success' and '로그아웃' not in message.message and '로그인' not in message.message %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+                {% endif %}
             {% endfor %}
         </div>
         {% endif %}
-        
-        <div class="form-section">
-            <h3>기본 정보</h3>
-            
-            <div class="form-group">
-                <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
-                {{ form.name }}
+
+        <form method="post" class="profile-edit-form">
+            {% csrf_token %}
+
+            {% if form.errors %}
+            <div class="form-error-banner">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
             </div>
-            
-            <div class="form-group">
-                <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
-                {{ form.email }}
+            {% endif %}
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+                    {{ form.name }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                    {{ form.email }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.address.id_for_label }}">{{ form.address.label }}</label>
+                    {{ form.address }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.height.id_for_label }}">{{ form.height.label }}</label>
+                    {{ form.height }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.weight.id_for_label }}">{{ form.weight.label }}</label>
+                    {{ form.weight }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.pregnancy.id_for_label }}">{{ form.pregnancy.label }}</label>
+                    {{ form.pregnancy }}
+                </div>
+                <div class="form-group form-group-wide">
+                    <label for="{{ form.disease_history.id_for_label }}">{{ form.disease_history.label }}</label>
+                    {{ form.disease_history }}
+                </div>
             </div>
-            
-            <div class="form-group">
-                <label for="{{ form.nickname.id_for_label }}">{{ form.nickname.label }}</label>
-                {{ form.nickname }}
+
+            <div class="profile-actions form-actions">
+                <button type="submit" class="pill-btn primary">저장</button>
+                <a href="{% url 'accounts:account_profile' %}" class="pill-btn ghost">취소</a>
             </div>
-        </div>
-        
-        <div class="action-section">
-            <button type="submit" class="custom-btn-save">저장</button>
-            <a href="{% url 'accounts:account_profile' %}" class="custom-btn-cancel">취소</a>
-        </div>
-    </form>
-</div>
-
-<style>
-.mypage-container {
-    margin: 20px 0px;
-    padding: 20px 40px;
-    background: #fff;
-    border-radius: 8px;
-    border: 1px solid #e9ecef;
-}
-
-.profile-edit-form {
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-.form-section {
-    padding: 1.5rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    height: 100%;
-    width: 100%;
-}
-
-.action-section {
-    padding-top: 40px !important;
-}
-
-.form-section h3 {
-    font-size: 20px;
-    margin-bottom: 1rem;
-    color: #333;
-    padding-bottom: 0.5rem;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    color: #333;
-}
-
-.form-group input,
-.form-group textarea {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
-}
-
-.action-section {
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-    align-items: center;
-    margin-top: 0px !important;
-    border-top: 0px !important;
-}
-
-/* 새로운 커스텀 버튼 스타일 - 더 강력한 선택자 */
-button.custom-btn-save,
-a.custom-btn-cancel {
-    padding: 12px 24px !important;
-    border: none !important;
-    border-radius: 10px !important;
-    text-decoration: none !important;
-    display: inline-block !important;
-    text-align: center !important;
-    font-weight: 600 !important;
-    cursor: pointer !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    color: white !important;
-    font-size: 14px !important;
-    min-width: 100px !important;
-    position: relative !important;
-    overflow: hidden !important;
-    transform: translateY(0) !important;
-    box-sizing: border-box !important;
-}
-
-/* 버튼 호버 공통 효과 */
-button.custom-btn-save:hover,
-a.custom-btn-cancel:hover {
-    text-decoration: none !important;
-    color: white !important;
-}
-
-/* 저장 버튼 - 파란색 그라데이션 */
-button.custom-btn-save {
-    background: linear-gradient(135deg, #667eea 0%) !important;
-}
-
-button.custom-btn-save:hover {
-    background: linear-gradient(135deg, #5a6fd8 0%) !important;
-    color: white !important;
-}
-
-/* 취소 버튼 - 회색 그라데이션 */
-a.custom-btn-cancel {
-    background: linear-gradient(135deg, #a8a8a8 0%) !important;
-}
-
-a.custom-btn-cancel:hover {
-    background: linear-gradient(135deg, #969696 0%) !important;
-    color: white !important;
-}
-
-.error-message {
-    background-color: #f8d7da;
-    color: #721c24;
-    padding: 1rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-    border: 1px solid #f5c6cb;
-}
-
-.messages {
-    margin-bottom: 1rem;
-}
-
-.alert {
-    padding: 1rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-}
-
-.alert-success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-</style>
+        </form>
+    </div>
+</section>
 {% endblock %}

@@ -9,7 +9,11 @@ class CustomUser(AbstractUser):
     """
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=50, blank=True)
-    nickname = models.CharField(max_length=30, blank=True)
+    address = models.CharField(max_length=255, blank=True)
+    height = models.PositiveSmallIntegerField(blank=True, null=True)
+    weight = models.PositiveSmallIntegerField(blank=True, null=True)
+    pregnancy = models.BooleanField(blank=True, null=True)
+    disease_history = models.TextField(blank=True)
 
     class Meta:
         verbose_name = "사용자"

@@ -14,16 +14,28 @@ class ChatMessageInline(admin.TabularInline):
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    list_display = ("email", "username", "nickname", "name", "is_staff", "is_active")
+    list_display = ("email", "username", "name", "is_staff", "is_active")
     list_filter = ("is_staff", "is_active")
-    search_fields = ("email", "username", "nickname", "name")
+    search_fields = ("email", "username", "name")
     ordering = ("email",)
 
     fieldsets = (
         (None, {"fields": ("username", "password")}),
         (
             _("Personal info"),
-            {"fields": ("first_name", "last_name", "email", "name", "nickname")},
+            {
+                "fields": (
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "name",
+                    "address",
+                    "height",
+                    "weight",
+                    "pregnancy",
+                    "disease_history",
+                )
+            },
         ),
         (
             _("Permissions"),
@@ -40,7 +52,11 @@ class CustomUserAdmin(UserAdmin):
                     "username",
                     "email",
                     "name",
-                    "nickname",
+                    "address",
+                    "height",
+                    "weight",
+                    "pregnancy",
+                    "disease_history",
                     "password1",
                     "password2",
                     "is_staff",

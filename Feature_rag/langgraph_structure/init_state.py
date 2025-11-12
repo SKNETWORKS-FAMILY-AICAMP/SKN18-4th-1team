@@ -7,6 +7,8 @@ class GraphState(TypedDict):
     need_quit: bool
     
     # 검색 관련
+    search_chunks:List
+    mean_similarity_score: float
     
     # 검색 평가 관련
     relevant_category: List[str]

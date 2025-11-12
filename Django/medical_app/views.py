@@ -78,10 +78,20 @@ def index(request):
             except Exception as e:
                 error = f'분석 중 오류가 발생했습니다: {str(e)}'
     
+    if request.user.is_authenticated:
+        chat_sessions = (
+            ChatSession.objects.filter(user=request.user)
+            .prefetch_related("messages")
+            .order_by("-created_at")
+        )
+    else:
+        chat_sessions = ChatSession.objects.none()
+
     context = {
         'symptoms': symptoms,
         'result': result,
         'error': error,
+        'chat_sessions': chat_sessions,
     }
     
     return render(request, 'medical_app/index.html', context)
