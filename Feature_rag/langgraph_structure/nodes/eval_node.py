@@ -13,7 +13,7 @@ def evaluate_chunk_node(state: GraphState) -> GraphState:
     relevant_category: list[str] = []
     relevance_scores: list[float] = []
     feedback_messages: list[str] = []
-    relevant_source: list[str] = []
+    relevant_source= []
     
     relevance_prompt = PromptTemplate.from_template(
         '''

@@ -6,12 +6,14 @@ def generation_llm_node(state: GraphState) -> GraphState:
 
     service = state.get("service")
     question = state.get("question")
+    relevant_source = state.get("relevant_source", [])
     llm = model("gpt-5-nano")
     if service == "symptom":
         chain = __symptom_template() | llm
         result = chain.invoke({
         "question": question,
         "relevant_contents": state.get('relevant_contents'),
+        "relevant_source": relevant_source
         })
         
     else:
@@ -21,7 +23,8 @@ def generation_llm_node(state: GraphState) -> GraphState:
         "most_likely_disease": state.get("most_likely_disease", ""),
         "severity": state.get("severity", ""),
         "final_department":state.get("final_department", ""),
-        "hospital_recommend": state.get("hospital_recommend")
+        "hospital_recommend": state.get("hospital_recommend"),
+        "relevant_source": relevant_source
 
         })
 
@@ -42,6 +45,9 @@ def __symptom_template() :
 
     [참고 컨텍스트(의학 문서 요약)]
     {relevant_contents}
+    
+    [참고 컨텍스트 출처]
+    {relevant_source}
     --------------------------------------
 
     ## 답변 생성 규칙 (반드시 준수)
@@ -67,13 +73,18 @@ def __symptom_template() :
     5. **사용자 친화적 표현**
         - 전문 용어는 간단한 부연 설명 포함
         - 불필요하게 긴 설명 금지
+        
+    4. 마지막에 친절한 의료 안내 문구 포함
+        예: "정확한 진단은 의료진의 진료를 통해 확인할 수 있습니다."
 
     ## 출력 형식
     - 증상 요약  
     - 가능한 원인/질환 후보  
     - 위험 신호 여부  
     - 도움이 되는 관리 방법  
-    - 필요 시 진료과 안내  
+    - 필요 시 진료과 안내
+    - !!참고된 문서 출처 표시!!
+    - 마무리 안내 문구
     """
     return PromptTemplate.from_template(template)
 
@@ -94,6 +105,9 @@ def __hospital_template():
 
             [추천된 병원 리스트 (점수 높은 순)]
             {hospital_recommend}
+            
+            [참고된 문서 출처]
+            {relevant_source}
             --------------------------------------
 
             ## 작성 규칙
@@ -115,6 +129,7 @@ def __hospital_template():
 
             - 추천 병원 1~2개 + 추천 이유
             - 진료과 적합성 설명
+            - !!참고된 문서 출처 표시!!
             - 마무리 안내 문구
     """
     return PromptTemplate.from_template(template)

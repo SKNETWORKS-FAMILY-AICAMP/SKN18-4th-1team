@@ -4,22 +4,24 @@ from typing import Any, Dict, List, TypedDict
 class GraphState(TypedDict):
     # 사용자 input 
     question: str
-    service: str
-    region: str # 지역
+    health_profile: dict
+    
+    # classification 관련
+    service: str # 증상분류, 병원찾기
+    department: List[str]
     
     # 검색 관련
-    department: List
-    search_chunks:List
-    mean_similarity_score: float
+    search_chunks: List[Dict[str, Any]]
+    mean_similarity_score: float[str] # 평균 유사도 점수
     
     # 검색 평가 관련
-    relevant_source:List[str]
-    relevant_category: List[str]
-    relevant_contents: List[str]
-    retrieval_question: bool        
-    avg_relevance: float
-    feedback_messages: str
-    max_token:str
+    relevant_source:List[Dict[str]] # 평가된 출처
+    relevant_category: List[str] # 평가된 카테고리
+    relevant_contents: List[str] # 평가된 내용
+    retrieval_question: bool   #     
+    avg_relevance: float # 평균 관련성 점수
+    feedback_messages: str # 피드백 메시지
+    max_token:str # 최대 토큰 수(질문 재작성 1번 실행)
     
     # 증상 판단
     most_likely_disease:str
@@ -28,5 +30,6 @@ class GraphState(TypedDict):
     
     # 병원 찾기
     hospital_recommend:List[Dict]
+    
     #최종 답볍
     final_answer:str
