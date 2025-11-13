@@ -1,127 +1,223 @@
 {% extends "layout/base.html" %}
 {% load static %}
 
-{% block title %}AI 의료 상담 - 상담하기{% endblock %}
+{% block title %}AI 의료 상담{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gradient">
-    <div class="particles"></div>
-    <div class="gradient-overlay"></div>
+<style>
+    /* 전체 화면 레이아웃 고정 (스크롤 방지) */
+    body, html {
+        height: 100%;
+        margin: 0;
+        overflow: hidden; /* 전체 스크롤 없애고 채팅창 내부만 스크롤 */
+    }
 
-    <div class="container">
-        <div class="header">
-            <div class="logo-container">
-                <div class="logo-img hero" aria-hidden="true">
-                    <img src="{% static 'images/cross_logo.png' %}" alt="AI 의료 상담 로고">
-                </div>
-                <h1 class="title">AI 의료 상담 시스템</h1>
-            </div>
-            <p class="subtitle">증상을 입력하면 AI가 관련 질병과 추천 병원을 분석해드립니다</p>
-        </div>
+    .chat-layout {
+        display: flex;
+        flex-direction: column;
+        height: 100vh; /* 화면 꽉 채우기 */
+        max-width: 800px; /* 너무 넓어지지 않게 제한 */
+        margin: 0 auto; /* 중앙 정렬 */
+        background-color: #f5f7fb; /* 배경색 */
+        position: relative;
+    }
 
-        <div class="alert-box">
-            <div class="alert-icon">ℹ️</div>
-            <div class="alert-text">
-                이 서비스는 참고용이며 전문 의료 진단을 대체할 수 없습니다. 심각한 증상이 있다면 즉시 병원을 방문하세요.
-            </div>
-        </div>
+    /* 1. 헤더 영역 */
+    .chat-header {
+        flex-shrink: 0; /* 크기 줄어들지 않음 */
+        padding: 15px 20px;
+        background: white;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        z-index: 10;
+    }
+    .header-logo { width: 30px; height: 30px; object-fit: contain; }
+    .header-title { font-size: 1.2rem; font-weight: bold; color: #333; margin: 0; }
 
-        {% if error %}
-        <div class="alert-box error-box">
-            <div class="alert-icon">⚠️</div>
-            <div class="alert-text">{{ error }}</div>
-        </div>
-        {% endif %}
+    /* 2. 채팅 내용 영역 (스크롤) */
+    .chat-container {
+        flex-grow: 1;
+        overflow-y: auto; /* 세로 스크롤 활성화 */
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        padding-bottom: 100px; /* 하단 입력창 가리지 않게 여백 */
+    }
 
-        <div class="card input-card">
-            <div class="card-header">
-                <div class="card-title">
-                    <span class="sparkle-icon">✨</span>
-                    증상 입력
-                </div>
-                <div class="card-description">
-                    현재 느끼시는 증상을 자세히 설명해주세요
-                </div>
-            </div>
-            <div class="card-content">
-                <form method="POST" action="{% url 'medical_app:index' %}">
-                    {% csrf_token %}
-                    <textarea
-                        name="symptoms"
-                        class="symptoms-textarea"
-                        placeholder="예: 어제부터 두통이 있고 미열이 있습니다..."
-                        rows="6"
-                        required
-                    >{{ symptoms }}</textarea>
-                    <button type="submit" class="analyze-button">
-                        <span class="button-icon">✨</span>
-                        <span class="button-text">증상 분석하기</span>
-                    </button>
-                </form>
-            </div>
-        </div>
+    /* 말풍선 공통 스타일 */
+    .message-row {
+        display: flex;
+        align-items: flex-start;
+        max-width: 80%;
+    }
+    .message-bubble {
+        padding: 12px 16px;
+        border-radius: 15px;
+        font-size: 1rem;
+        line-height: 1.6;
+        white-space: pre-wrap; /* 줄바꿈 반영 */
+        word-break: break-word;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
 
-        {% if result %}
-        <div id="results" class="results-section">
-            <div class="card success-card">
-                <div class="success-content">
-                    <div class="heart-icon">❤️</div>
-                    <div class="success-text">
-                        <h3>분석 완료!</h3>
-                        <p>아래에서 결과를 확인하세요</p>
-                    </div>
-                    <div class="dna-icon">🧬</div>
-                </div>
-            </div>
+    /* (A) AI 메시지 (왼쪽) */
+    .message-ai {
+        align-self: flex-start;
+    }
+    .ai-icon {
+        font-size: 1.5rem;
+        margin-right: 10px;
+        margin-top: 5px;
+    }
+    .message-ai .message-bubble {
+        background-color: white;
+        color: #333;
+        border-top-left-radius: 2px;
+    }
 
-            <div class="card results-card">
-                <div class="results-grid">
-                    <div class="results-column">
-                        <h3>가능성 있는 질병</h3>
-                        <div class="disease-list">
-                            {% for disease in result.diseases %}
-                            <div class="disease-card severity-{{ disease.severity }}">
-                                <div class="disease-header">
-                                    <h4>{{ disease.name }}</h4>
-                                    <span class="severity">{{ disease.severity|upper }}</span>
-                                </div>
-                                <p>{{ disease.description }}</p>
-                                <div class="recommendations">
-                                    <h5>권장사항</h5>
-                                    <ul>
-                                        {% for rec in disease.recommendations %}
-                                        <li>{{ rec }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
+    /* (B) 사용자 메시지 (오른쪽) */
+    .message-user {
+        align-self: flex-end; /* 오른쪽 정렬 */
+        flex-direction: row-reverse; /* 아이콘이 있다면 반대로 */
+    }
+    .message-user .message-bubble {
+        background-color: #4A90E2; /* 파란색 */
+        color: white;
+        border-top-right-radius: 2px;
+    }
 
-                    <div class="results-column">
-                        <h3>추천 병원</h3>
-                        <div class="hospital-list">
-                            {% for hospital in result.hospitals %}
-                            <div class="hospital-card">
-                                <div class="hospital-header">
-                                    <h4>{{ hospital.name }}</h4>
-                                    <span class="specialty">{{ hospital.specialty }}</span>
-                                </div>
-                                <div class="hospital-info">
-                                    <p><strong>거리:</strong> {{ hospital.distance }}</p>
-                                    <p><strong>대기 시간:</strong> {{ hospital.waitTime }}</p>
-                                    <p><strong>주소:</strong> {{ hospital.address }}</p>
-                                    <p><strong>전화:</strong> {{ hospital.phone }}</p>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
+    /* 3. 하단 입력창 (고정) */
+    .chat-input-area {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        padding: 15px 20px;
+        border-top: 1px solid #e0e0e0;
+        display: flex;
+        gap: 10px;
+        align-items: flex-end;
+    }
+    
+    .input-wrapper {
+        position: relative;
+        flex-grow: 1;
+    }
+
+    .chat-input {
+        width: 100%;
+        padding: 12px 15px;
+        padding-right: 40px; /* 버튼 공간 */
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        resize: none; /* 크기 조절 불가 */
+        height: 50px; /* 기본 높이 */
+        max-height: 120px;
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    .chat-input:focus {
+        border-color: #4A90E2;
+    }
+
+    .send-btn {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: #4A90E2;
+        color: white;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+        flex-shrink: 0;
+    }
+    .send-btn:hover { background: #357ABD; }
+    
+    /* 로딩 애니메이션 (선택사항) */
+    .typing-indicator { font-size: 0.8rem; color: #888; margin-left: 45px; margin-bottom: 5px; display: none; }
+</style>
+
+<div class="chat-layout">
+    <div class="chat-header">
+        <img src="{% static 'images/cross_logo.png' %}" alt="Logo" class="header-logo">
+        <h2 class="header-title">AI 의료 상담</h2>
     </div>
+
+    <div id="chatContainer" class="chat-container">
+        <div class="message-row message-ai">
+            <div class="ai-icon">🤖</div>
+            <div class="message-bubble">
+                안녕하세요! AI 의료 어시스턴트입니다.<br>
+                증상을 말씀해 주시면 예상 질병과 병원을 안내해 드립니다.
+            </div>
+        </div>
+
+        {% for msg in chat_history %}
+            {% if msg.role == 'user' %}
+                <div class="message-row message-user">
+                    <div class="message-bubble">{{ msg.content }}</div>
+                </div>
+            {% else %}
+                <div class="message-row message-ai">
+                    <div class="ai-icon">🤖</div>
+                    <div class="message-bubble">{{ msg.content|linebreaksbr }}</div>
+                </div>
+            {% endif %}
+        {% endfor %}
+        
+        <div id="loadingIndicator" class="typing-indicator">
+            AI가 답변을 작성 중입니다...
+        </div>
+    </div>
+
+    <form method="POST" action="{% url 'medical_app:index' %}" class="chat-input-area" onsubmit="showLoading()">
+        {% csrf_token %}
+        <div class="input-wrapper">
+            <input 
+                type="text" 
+                name="symptoms" 
+                class="chat-input" 
+                placeholder="증상을 입력하세요..." 
+                required 
+                autocomplete="off"
+                autofocus
+            >
+        </div>
+        <button type="submit" class="send-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+        </button>
+    </form>
 </div>
+
+<script>
+    // 페이지 로드 시 스크롤 맨 아래로 이동
+    function scrollToBottom() {
+        const container = document.getElementById('chatContainer');
+        container.scrollTop = container.scrollHeight;
+    }
+
+    // 폼 제출 시 로딩 표시
+    function showLoading() {
+        document.getElementById('loadingIndicator').style.display = 'block';
+        scrollToBottom();
+        // 약간의 지연 후 스크롤 다시 내림 (화면 밀림 방지)
+        setTimeout(scrollToBottom, 100);
+    }
+
+    // 시작할 때 실행
+    window.onload = scrollToBottom;
+</script>
+
 {% endblock %}
