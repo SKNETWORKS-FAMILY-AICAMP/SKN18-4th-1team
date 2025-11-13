@@ -8,6 +8,7 @@ class GraphState(TypedDict):
     region: str # 지역
     
     # 검색 관련
+    department: List
     search_chunks:List
     mean_similarity_score: float
     
