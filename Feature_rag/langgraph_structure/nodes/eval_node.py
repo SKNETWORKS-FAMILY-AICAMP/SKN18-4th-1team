@@ -13,6 +13,7 @@ def evaluate_chunk_node(state: GraphState) -> GraphState:
     relevant_category: list[str] = []
     relevance_scores: list[float] = []
     feedback_messages: list[str] = []
+    relevant_source: list[str] = []
     
     relevance_prompt = PromptTemplate.from_template(
         '''
@@ -45,6 +46,7 @@ def evaluate_chunk_node(state: GraphState) -> GraphState:
         score = result.get("evaluation_score", 0)
         if score >= 60:
             relevant_category.append(doc.metadata["domain"])
+            relevant_source.append(doc.metadata['source_spec'])
             relevant_contents.append(chunk)
             relevance_scores.append(score)
         else:
@@ -61,6 +63,7 @@ def evaluate_chunk_node(state: GraphState) -> GraphState:
         
     return {
         **state,
+        "relevant_source":relevant_source,
         "relevant_category":relevant_category,
         "relevant_contents": relevant_contents,
         "retrieval_question": retrieval_question,
@@ -71,5 +74,13 @@ def evaluate_chunk_node(state: GraphState) -> GraphState:
     
 def classify_retrieval(state: GraphState) -> str:
     if state["retrieval_question"]:
-        return END if state.get("max_token") else "rewrite_question_node"
-    return "judgment_symtom_node"
+        if state.get("max_token"):
+            return END  
+        return "rewrite_question_node"
+    # 2) service 종류에 따라 라우팅
+    service = state.get("service")
+    if service == "symptom":
+        return "generation_llm_node"
+    elif service == "hospital":
+        return "judgment_symtom_node"
+

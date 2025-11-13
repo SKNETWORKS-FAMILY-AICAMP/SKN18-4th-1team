@@ -1,5 +1,5 @@
 from langgraph_structure.init_state import GraphState
-from langgraph_structure.utils import set_embedding_model, set_conn_str
+from langgraph_structure.utils import set_embedding_model
 from langgraph_structure.Rag.custom_pgvector import CustomPGVector
 
 
@@ -9,10 +9,10 @@ def search_vectordb(state: GraphState) -> GraphState:
     search_chunks=[]
     mean_similarity_score = 0.0
     embed = set_embedding_model()
-    vectorstore = CustomPGVector(conn_str=set_conn_str(), embedding_fn=embed)
+    vectorstore = CustomPGVector(embedding_fn=embed)
     question = state.get("question","") # 추후 수정필요
-    filter = state.get("department", "")
-    if not filter and filter=="기타 ":
+    filter = state.get("department", [])
+    if not filter or all(d == "기타" for d in filter):
         results = vectorstore.similarity_search_with_score(question, k=5)
     else:
         results = vectorstore.similarity_search_with_score(question, k=5, filter=filter)
@@ -29,4 +29,3 @@ def search_vectordb(state: GraphState) -> GraphState:
         "mean_similarity_score": mean_similarity_score,
         "search_chunks":search_chunks
     }
-

@@ -16,7 +16,10 @@ def judgment_symtom_node(state:GraphState)-> GraphState:
 
         ### 질환 후보 목록 (RAG 검색 결과)
         {relevant_contents}
-        ---
+        
+        ### 질료과 후보 목록
+        {relevant_category}
+        
         ## 판단 기준
         1 **질환 선정**
             - 증상 표현, 연관 부위, 발병 원인, 동반 증상 등을 종합적으로 고려하세요.

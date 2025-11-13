@@ -1,7 +1,7 @@
 
 from dotenv import load_dotenv
 load_dotenv()
-from langgraph_structure.utils import set_embedding_model,close_pool
+from langgraph_structure.utils import set_embedding_model
 from langgraph_structure.Rag.custom_ingest import VectorIngest 
 
 
@@ -15,7 +15,4 @@ def main():
     )()
 
 if __name__ == "__main__":
-    try:
-        main()
-    except:
-        close_pool()
+    main()
