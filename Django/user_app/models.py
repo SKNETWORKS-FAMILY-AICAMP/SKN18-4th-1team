@@ -22,7 +22,7 @@ class CustomUser(AbstractUser):
     def __str__(self) -> str:
         return self.username or self.email
 
-
+# 사용자 상담 기록 저장
 class ChatSession(models.Model):
     """
     Tracks a chat conversation, initially keyed by an anonymous session and
@@ -72,3 +72,32 @@ class ChatMessage(models.Model):
 
     def __str__(self) -> str:
         return f"{self.get_role_display()}@{self.created_at:%Y-%m-%d %H:%M}"
+
+
+class Survey(models.Model):
+    """
+    Stores the initial health survey that is collected during signup.
+    """
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="surveys",
+    )
+    gender = models.CharField(max_length=10, blank=True)
+    age = models.PositiveSmallIntegerField(blank=True, null=True)
+    address = models.TextField(blank=True)
+    has_chronic_disease = models.BooleanField(blank=True, null=True)
+    is_pregnant = models.BooleanField(blank=True, null=True)
+    height_cm = models.FloatField(blank=True, null=True)
+    weight_kg = models.FloatField(blank=True, null=True)
+    bmi = models.FloatField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "건강 설문"
+        verbose_name_plural = "건강 설문"
+        ordering = ["-created_at"]
+
+    def __str__(self) -> str:
+        return f"{self.user} 설문 ({self.created_at:%Y-%m-%d})"

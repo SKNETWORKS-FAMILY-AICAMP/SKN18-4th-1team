@@ -1,25 +1,24 @@
 from django.contrib import messages
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
-from allauth.account.forms import LoginForm
-
-from .forms import CustomUserChangeForm, CustomUserCreationForm
+from .forms import (
+    CustomUserChangeForm,
+    CustomUserCreationForm,
+    EmailOrUsernameAuthenticationForm,
+)
 from .models import ChatSession
 
 
-def home_view(request):
-    """
-    Thin wrapper that surfaces the allauth login form at /users/.
-    """
+def login_view(request):
+    """Render and process the local login form at /users/."""
     if request.user.is_authenticated:
         return redirect('medical_app:index')
 
-    form = LoginForm(request=request, data=request.POST or None)
+    form = EmailOrUsernameAuthenticationForm(request=request, data=request.POST or None)
     if request.method == 'POST' and form.is_valid():
-        user = form.user
-        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        login(request, form.get_user())
         return redirect('medical_app:index')
 
     return render(request, 'user_app/login.html', {'form': form})
@@ -33,7 +32,7 @@ def signup_view(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            login(request, user)
             return redirect('medical_app:index')
     else:
         form = CustomUserCreationForm()
@@ -59,6 +58,19 @@ def mypage_view(request):
             'chat_sessions': chat_sessions,
         },
     )
+
+
+@login_required
+def logout_view(request):
+    """
+    Handle logout confirmation and POST-based sign-out for CSRF protection.
+    """
+    if request.method == 'POST':
+        logout(request)
+        messages.success(request, '로그아웃되었습니다.')
+        return redirect('medical_app:home')
+
+    return render(request, 'user_app/logout.html')
 
 
 @login_required

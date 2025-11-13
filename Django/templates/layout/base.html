@@ -20,15 +20,15 @@
             {% endif %}
             {% if request.user.is_authenticated %}
                 <a class="nav-btn ghost" href="{% url 'accounts:account_profile' %}">마이페이지</a>
-                <form method="post" action="{% url 'account_logout' %}">
+                <form method="post" action="{% url 'accounts:logout' %}">
                     {% csrf_token %}
                     <button type="submit" class="nav-btn danger">로그아웃</button>
                 </form>
             {% else %}
-                {% if current != 'account_login' and current != 'login' %}
-                    <a class="nav-btn ghost" href="{% url 'account_login' %}">로그인</a>
+                {% if current != 'login' %}
+                    <a class="nav-btn ghost" href="{% url 'accounts:login' %}">로그인</a>
                 {% endif %}
-                {% if current != 'signup' and current != 'account_signup' %}
+                {% if current != 'signup' %}
                     <a class="nav-btn primary" href="{% url 'accounts:signup' %}">회원가입</a>
                 {% endif %}
             {% endif %}
