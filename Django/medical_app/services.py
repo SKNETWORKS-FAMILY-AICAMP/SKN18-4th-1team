@@ -1,22 +1,38 @@
 """
 증상 분석 서비스 로직
 """
-from Feature_rag.langgraph_structure.graph import create_graph_flow
-
-langgraph_app = create_graph_flow()
+# ▼▼▼ [중요] 에러가 나는 RAG 관련 임포트를 모두 주석 처리합니다 ▼▼▼
+# from Feature_rag.langgraph_structure.graph import create_graph_flow
+# langgraph_app = create_graph_flow()
 
 def analyze_symptoms(symptoms_text):
-    # return {'diseases': diseases, 'hospitals': hospitals}
-    #--> return이 반드시 이 딕셔너리 형식이여야 함
     """
-    LangGraph를 실행하고 AI의 '텍스트 답변'을 반환합니다.
+    API 키가 없을 때를 대비한 '테스트 모드' 함수입니다.
+    실제 LangGraph를 호출하지 않고, 고정된 텍스트 답변을 반환합니다.
     """
-    # 1. LangGraph 실행
-    input_data = {"question": symptoms_text}
-    response_state = langgraph_app.invoke(input_data)
     
-    # 2. 최종 답변(문자열) 추출
-    # generation_llm.py가 생성한 'final_answer' 키의 값을 가져옵니다.
-    final_answer_text = response_state.get("final_answer", "죄송합니다. 답변을 생성할 수 없습니다.")
+    # 1. (주석 처리) 실제 LangGraph 호출 부분
+    # input_data = {"question": symptoms_text}
+    # response_state = langgraph_app.invoke(input_data)
+    # final_answer_text = response_state.get("final_answer", "죄송합니다...")
+    # return final_answer_text
+
+    # 2. [추가] 가짜 답변 반환 (화면 테스트용)
+    dummy_response = f"""
+    [테스트 모드 동작 중]
     
-    return final_answer_text
+    사용자님의 증상: "{symptoms_text}"
+    
+    현재 OpenAI API 키가 없어서 AI가 실제로 분석할 수는 없지만,
+    Django 서버와 프론트엔드 연결은 완벽하게 작동하고 있습니다!
+    
+    이 메시지가 보인다면:
+    1. views.py 연결 성공
+    2. services.py 호출 성공
+    3. index.html 결과 표시 성공
+    
+    모든 배관 작업이 완료되었습니다. 
+    나중에 API 키만 생기면 주석만 풀어서 바로 연결할 수 있습니다.
+    """
+    
+    return dummy_response.strip()
