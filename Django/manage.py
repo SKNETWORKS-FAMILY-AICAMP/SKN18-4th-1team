@@ -8,11 +8,16 @@ def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
-    # ▼▼▼ [추가된 부분] 상위 폴더(Feature_rag)를 인식하게 해주는 마법의 코드 ▼▼▼
-    current_path = Path(__file__).resolve().parent  # 현재 manage.py 위치 (Django 폴더)
-    parent_path = current_path.parent             # 그 상위 폴더 (SKN18-4th-1Team)
-    sys.path.append(str(parent_path))             # 파이썬 경로에 추가!
-    # ▲▲▲ [추가 끝] ▲▲▲
+    # ▼▼▼ 경로 추가 로직 ▼▼▼
+    current_path = Path(__file__).resolve().parent  # Django 폴더
+    parent_path = current_path.parent             # SKN18-4th-1Team 폴더
+    
+    # 1. 프로젝트 최상위 루트 추가 (Feature_rag를 찾기 위함)
+    sys.path.append(str(parent_path))
+    
+    # 2. Feature_rag 폴더 내부 추가 (langgraph_structure를 찾기 위함) << 이 부분 추가됨!
+    sys.path.append(str(parent_path / 'Feature_rag'))
+    # ▲▲▲ [수정 끝] ▲▲▲
 
     try:
         from django.core.management import execute_from_command_line
