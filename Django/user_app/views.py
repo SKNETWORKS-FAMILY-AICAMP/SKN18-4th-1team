@@ -33,7 +33,8 @@ def signup_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('medical_app:index')
+            request.session['show_survey_once'] = True
+            return redirect('survey:survey_form')
     else:
         form = CustomUserCreationForm()
 

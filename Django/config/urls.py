@@ -8,5 +8,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('medical_app.urls')),
     path('users/', include('user_app.urls')),
+    path('survey/', include(('survey.urls', 'survey'), namespace='survey')),
 ]
 
