@@ -71,6 +71,7 @@ def calculate_score(grades, severity):
 # 병원 추천 search node
 ##############################################
 def search_hospital_node(state: GraphState) -> GraphState:
+    """병원 추천 수행 (pool 사용)"""
     department, region = state.get("final_department"), state.get("region")
     severity = state.get("severity", "MID")
 
@@ -82,7 +83,8 @@ def search_hospital_node(state: GraphState) -> GraphState:
         parsed.get("sigungu"),
     ]
 
-    conn = pool.get_conn()
+    # Pool에서 연결 획득
+    conn = pool.getconn()
     hospitals = {}
 
     try:
@@ -126,8 +128,10 @@ def search_hospital_node(state: GraphState) -> GraphState:
 
                 break
 
+    except Exception as e:
+        print(f"❌ 병원 검색 오류: {e}")
     finally:
-        pool.put_conn(conn)
+        pool.putconn(conn)
 
     # 후보가 없으면 빈 배열
     if not hospitals:

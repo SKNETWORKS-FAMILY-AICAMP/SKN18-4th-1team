@@ -12,10 +12,10 @@ class GraphState(TypedDict):
     
     # 검색 관련
     search_chunks: List[Dict[str, Any]]
-    mean_similarity_score: float[str] # 평균 유사도 점수
+    mean_similarity_score: float # 평균 유사도 점수
     
     # 검색 평가 관련
-    relevant_source:List[Dict[str]] # 평가된 출처
+    relevant_source:List[Dict] # 평가된 출처
     relevant_category: List[str] # 평가된 카테고리
     relevant_contents: List[str] # 평가된 내용
     retrieval_question: bool   #     

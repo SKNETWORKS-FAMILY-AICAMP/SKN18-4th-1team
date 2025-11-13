@@ -17,7 +17,7 @@ aes_key = generate_aes256_key(seed)
 os.environ["LANGGRAPH_AES_KEY"] = aes_key
 
 print("AES-256 Key 생성 및 환경변수 등록 완료.")
-print(aes_key) # 21b6a798321a49f75b9c3827fa3cfdb7efe2c4e05c3d13aefe1c825b9774a158
+print(aes_key) 
 
 
 # 암호화 목적

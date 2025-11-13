@@ -5,16 +5,7 @@ from langchain_core.vectorstores import VectorStore
 from langchain_core.documents import Document
 from langgraph_structure.utils import pool
 
-class Singleton(type(VectorStore)):
-    _instances: Dict[type, VectorStore] = {}
-
-    def __call__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            cls._instances[cls] = super().__call__(*args, **kwargs)
-        return cls._instances[cls]
-
-
-class CustomPGVector(VectorStore, metaclass=Singleton):
+class CustomPGVector(VectorStore):
     def __init__(self, embedding_fn, table: str = "medical_table"):
         self.conn = pool.getconn()
         self.embedding_fn = embedding_fn
