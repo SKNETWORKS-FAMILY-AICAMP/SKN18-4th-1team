@@ -1,63 +1,158 @@
-import sqlite3
-from langchain.chat_models import ChatOpenAI
-from langchain_core.prompts import PromptTemplate
-from dotenv import load_dotenv
+from langgraph_structure.init_state import GraphState
+from langgraph_structure.utils import pool
+import re
 
-load_dotenv()
+##############################################
+# 주소 문자열을 시도/시군구/도로명/동으로 파싱
+###############################################
+def parse_region(region: str):
+    region_clean = re.sub(r"[\(\),]", " ", region).strip()
 
-def search_hospital_node():
-    """
-    사용자의 질문을 분석하여 DB 검색에 사용할 키워드를 생성하는 노드
-    """
-    template = """
-    당신은 의료 안내 시스템의 전문가입니다.
-    아래 사용자의 질문을 분석하여 병원 데이터베이스 검색에 사용할 핵심 키워드를 만드세요.
-    예: "정형외과", "피부과", "내과", "응급실", "소아청소년과" 등
+    dong = None
+    if m := re.search(r"\((.*?)\)", region):
+        p = [v.strip() for v in re.split(r"[,、]", m.group(1))]
+        dong = next((v for v in p if v.endswith("동")), None)
 
-    질문: {question}
+    pattern = (
+        r'(?P<sido>[가-힣]+(?:특별시|광역시|도))?\s*'
+        r'(?P<sigungu>[가-힣]+(?:시|군))?\s*'
+        r'(?P<gu>[가-힣]+구)?\s*'
+        r'(?P<road>[가-힣0-9]+(?:로|길|대로))?'
+    )
+    parsed = re.match(pattern, region_clean)
+    result = parsed.groupdict() if parsed else {}
+    result["dong"] = dong
+    return result
+######################################################
+# care_grade 점수 변환 점수
+# --> 1~7은 등급 점수, A/S는 중간값(50) 처리
+#########################################################
+def grade_to_score(v):
+    if not v:
+        return 50
+    v = str(v).upper()
+    if v.isdigit() and 1 <= int(v) <= 7:
+        return (8 - int(v)) * 15
+    return 50
 
-    출력은 키워드 하나만 주세요.
-    """
-    return PromptTemplate.from_template(template)
+########################################
+#  중증도별 기준 가중 치 설정 변수 
+#######################################
+CRITERIA_LIST = [
+    "간호인력", "의료인력", "건강보험", "건강보험(환자수)",
+    "의료급여", "의료급여(환자수)"
+]
 
+WEIGHTS = {
+    "HIGH": {"간호인력": 0.30, "의료인력": 0.40, "건강보험": 0.05, "건강보험(환자수)": 0.15, "의료급여": 0.05, "의료급여(환자수)": 0.05},
+    "MID":  {"간호인력": 0.35, "의료인력": 0.25, "건강보험": 0.15, "건강보험(환자수)": 0.10, "의료급여": 0.10, "의료급여(환자수)": 0.05},
+    "LOW":  {"간호인력": 0.20, "의료인력": 0.10, "건강보험": 0.20, "건강보험(환자수)": 0.20, "의료급여": 0.15, "의료급여(환자수)": 0.15},
+}
 
-def search_hospital(state: dict) -> dict:
-    """
-    병원 RDB에서 관련 병원 정보를 검색하는 노드
-    """
-    model = ChatOpenAI(
-        model="gpt-5-nano", 
-        reasoning_effort="low"
-        )
-    chain = search_hospital_node() | model
+'''
+간호인력 → 간호사 수 / 간호등급 (HIGH일수록 중요)
+의료인력 → 의사 수 / 전문의 수 (HIGH일수록 가장 중요)
+건강보험 → 건강보험 진료량 (경증일수록 중요)
+건강보험(환자수) → 환자 수 기반 지표 (지역 접근성 판단에 가까움)
+의료급여 / 의료급여(환자수) → 취약계층 진료량 (경증/중등도에서 의미)
 
-    question = state.get("question", "")
-    response = chain.invoke({"question": question})
-    keyword = response.content.strip()
+'''
 
-    # DB 연결 (SQLite 예시)
-    conn = sqlite3.connect("hospital.db")
-    cursor = conn.cursor()
+###################################################
+# 병원별 최종 점수 계산 함수
+########################################################
+def calculate_score(grades, severity):
+    return sum(
+        grade_to_score(g) * WEIGHTS[severity].get(c, 0)
+        for c, g in grades.items()
+    )
 
-    # SQL 실행 (부분 일치 검색)
-    query = """
-    SELECT name, addr, special_field, nursing_grade, medical_info
-    FROM hospitals
-    WHERE special_field LIKE ? OR name LIKE ?;
-    """
-    cursor.execute(query, (f"%{keyword}%", f"%{keyword}%"))
-    results = cursor.fetchall()
-    conn.close()
+##############################################
+# 병원 추천 search node
+##############################################
+def search_hospital_node(state: GraphState) -> GraphState:
+    department, region = state.get("final_department"), state.get("region")
+    severity = state.get("severity", "MID")
 
-    # 결과 문자열 정리
-    formatted = "\n\n".join([
-        f"병원명: {r[0]}\n주소: {r[1]}\n전문분야: {r[2]}\n간호등급: {r[3]}"
-        for r in results
-    ])
+    parsed = parse_region(region)
+    search_keys = [
+        parsed.get("road"),
+        parsed.get("dong"),
+        parsed.get("gu"),
+        parsed.get("sigungu"),
+    ]
 
-    return {
-        **state,
-        "search_keyword": keyword,
-        "hospital_results": formatted,
-        "route": "output"
-    }
+    conn = pool.get_conn()
+    hospitals = {}
+
+    try:
+        with conn.cursor() as cur:
+            base_sql = """
+                SELECT 
+                    hospital_name, address, medical_specialties,
+                    care_grade_basis, care_grade, equip_summary
+                FROM hospital_table
+                WHERE 1=1
+            """
+            params = []
+
+            if department:
+                base_sql += " AND medical_specialties ILIKE CONCAT('%%', %s, '%%')"
+                params.append(department)
+
+            # fallback 검색
+            for key in search_keys:
+                if not key:
+                    continue
+
+                sql = base_sql + " AND address ILIKE CONCAT('%%', %s, '%%');"
+                cur.execute(sql, (*params, key))
+                rows = cur.fetchall()
+
+                if not rows:
+                    continue
+
+                # 병원 데이터 구성
+                for name, addr, spec, basis, grade, eq in rows:
+                    if name not in hospitals:
+                        hospitals[name] = {
+                            "hospital_name": name,
+                            "address": addr,
+                            "medical_specialties": spec,
+                            "equip_summary": eq,
+                            "care_grade_basis": {c: None for c in CRITERIA_LIST},
+                        }
+                    hospitals[name]["care_grade_basis"][basis] = grade
+
+                break
+
+    finally:
+        pool.put_conn(conn)
+
+    # 후보가 없으면 빈 배열
+    if not hospitals:
+        return {**state, "hospital_recommend": []}
+
+    # 점수 계산 + 상위 2개만
+    ranked = sorted(
+        (
+            {**info, "score": calculate_score(info["care_grade_basis"], severity)}
+            for info in hospitals.values()
+        ),
+        key=lambda x: x["score"],
+        reverse=True
+    )
+
+    return {**state, "hospital_recommend": ranked[:2]}
+
+# -----------------------------
+# 테스트
+# -----------------------------
+if __name__ == "__main__":
+    result = search_hospital_node({
+        "region": "서울시 서초구 헌릉로8길 58",
+        "final_department": "외과",
+        "severity": "HIGH"
+    })
+    print(result["hospital_recommend"])
+    

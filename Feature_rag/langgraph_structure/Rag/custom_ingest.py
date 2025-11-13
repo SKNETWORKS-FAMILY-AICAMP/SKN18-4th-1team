@@ -1,16 +1,12 @@
-from pathlib import Path
-import sys
-sys.path.append(str(Path(__file__).resolve().parents[1]))
 
-from Langgraph.Rag.custom_pgvector import CustomPGVector
-from Langgraph.Rag.custom_loader import CustomCSVLoader
+from langgraph_structure.Rag.custom_pgvector import CustomPGVector
+from langgraph_structure.Rag.custom_loader import CustomCSVLoader
 from typing import List
 
 
 class VectorIngest():
-    def __init__(self, conn_str, embedding_fn, 
-                file_path, content_column:str, metadata_columns:List[str], batch_size:int=500):
-        self.conn_str = conn_str
+    def __init__(self, embedding_fn, 
+                file_path, content_column:str, metadata_columns:List[str], batch_size:int=300):
         self.embedding_fn = embedding_fn
         self.file_path= file_path
         self.content_column = content_column
@@ -21,7 +17,7 @@ class VectorIngest():
     
     def __call__(self):
         self._load()
-        self.create_pgvector_store()
+        self._create_pgvector_store()
         self._add_documents_to_pgvector()
         
     def _load(self) -> None:
@@ -31,10 +27,9 @@ class VectorIngest():
             metadata_columns=self.metadata_columns)
         self.documents  = documents.load()
         
-    def create_pgvector_store(self) -> None:
+    def _create_pgvector_store(self) -> None:
         """PGVector 스토어 생성"""
         self.vectorstore = CustomPGVector( 
-                            conn_str=self.conn_str, 
                             embedding_fn=self.embedding_fn)
         return self.vectorstore
 

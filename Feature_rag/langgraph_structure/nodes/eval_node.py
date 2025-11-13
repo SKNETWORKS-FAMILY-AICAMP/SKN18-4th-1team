@@ -1,6 +1,6 @@
 from langchain_core.prompts import PromptTemplate
 from langgraph_structure.init_state import GraphState
-from langgraph_structure.graph import END
+from langgraph.graph import END
 from langgraph_structure.utils import model
 import json
 
@@ -13,6 +13,7 @@ def evaluate_chunk_node(state: GraphState) -> GraphState:
     relevant_category: list[str] = []
     relevance_scores: list[float] = []
     feedback_messages: list[str] = []
+    relevant_source: list[str] = []
     
     relevance_prompt = PromptTemplate.from_template(
         '''
@@ -36,7 +37,7 @@ def evaluate_chunk_node(state: GraphState) -> GraphState:
     )
     llm = model("gpt-5-nano", temperature=0.0)
     chain = relevance_prompt | llm
-    for doc in state.get("search_document"):
+    for doc in state.get("search_chunks"):
         chunk = doc.page_content
         response = chain.invoke(
             {'question':state.get("question"), "chunk": chunk}
@@ -44,7 +45,8 @@ def evaluate_chunk_node(state: GraphState) -> GraphState:
         result = json.loads(response.content)
         score = result.get("evaluation_score", 0)
         if score >= 60:
-            relevant_category.append(doc.metadata["category"])
+            relevant_category.append(doc.metadata["domain"])
+            relevant_source.append(doc.metadata['source_spec'])
             relevant_contents.append(chunk)
             relevance_scores.append(score)
         else:
@@ -61,6 +63,7 @@ def evaluate_chunk_node(state: GraphState) -> GraphState:
         
     return {
         **state,
+        "relevant_source":relevant_source,
         "relevant_category":relevant_category,
         "relevant_contents": relevant_contents,
         "retrieval_question": retrieval_question,
@@ -71,7 +74,13 @@ def evaluate_chunk_node(state: GraphState) -> GraphState:
     
 def classify_retrieval(state: GraphState) -> str:
     if state["retrieval_question"]:
-        return END if state.get("max_token") else "rewrite_question_node"
-    return "search_hospital_node"
-
+        if state.get("max_token"):
+            return END  
+        return "rewrite_question_node"
+    # 2) service 종류에 따라 라우팅
+    service = state.get("service")
+    if service == "symptom":
+        return "generation_llm_node"
+    elif service == "hospital":
+        return "judgment_symtom_node"
 
