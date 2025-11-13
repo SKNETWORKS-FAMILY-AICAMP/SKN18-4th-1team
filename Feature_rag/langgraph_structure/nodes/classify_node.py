@@ -25,7 +25,7 @@ def classify_node(state: GraphState) -> GraphState:
                     {
                         "need_quit": True or False,
                         "department": "진료과 이름 (관련 없음이면 null)"
-}
+                    }
                     """
                 )
             ),
