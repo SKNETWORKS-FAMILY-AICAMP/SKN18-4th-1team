@@ -1,3 +1,5 @@
 .env
 database
 __pycache__
+data_cleansing
+db.sqlite3
