@@ -1,28 +1,9 @@
 import json
-
 from django.shortcuts import render
-
 from user_app.models import ChatMessage, ChatSession
-
 from .services import analyze_symptoms
 
-
-def _format_result_for_log(result: dict) -> str:
-    """Convert the analysis payload into a readable text block for history."""
-    lines = []
-    for disease in result.get('diseases', []):
-        lines.append(f"[질병] {disease['name']}: {disease['description']}")
-        if disease.get('recommendations'):
-            for tip in disease['recommendations']:
-                lines.append(f"  - {tip}")
-    for hospital in result.get('hospitals', []):
-        lines.append(
-            f"[병원] {hospital['name']} ({hospital.get('specialty', '')}) - {hospital.get('address', '')}"
-        )
-    if not lines:
-        lines.append(json.dumps(result, ensure_ascii=False))
-    return "\n".join(lines)
-
+# _format_result_for_log는 최종 출력 형식이 dic -> str로 된 관계로 삭제했습니다
 
 def _get_or_create_session_for_user(request):
     if not request.session.session_key:
@@ -68,12 +49,15 @@ def index(request):
             error = '증상을 입력해주세요.'
         else:
             try:
+                # 1. LangGraph가 생성한 '문자열' 답변을 받습니다.
                 result = analyze_symptoms(symptoms)
+                # 2. 사용자 질문 저장
                 _store_message(request, ChatMessage.Role.USER, symptoms)
+                # 3. [수정됨] 포맷팅 없이 결과 문자열을 그대로 저장합니다.
                 _store_message(
                     request,
                     ChatMessage.Role.ASSISTANT,
-                    _format_result_for_log(result),
+                    result # _format_result_for_log 없이 바로
                 )
             except Exception as e:
                 error = f'분석 중 오류가 발생했습니다: {str(e)}'
