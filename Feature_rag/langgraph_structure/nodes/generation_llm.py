@@ -3,7 +3,8 @@ from langchain_core.prompts import PromptTemplate
 from langgraph_structure.utils import model
 
 def generation_llm_node(state: GraphState) -> GraphState:
-
+    summary = state.get("summary", "")
+    history = state.get("history", [])
     service = state.get("service")
     question = state.get("question")
     relevant_source = state.get("relevant_source", [])
@@ -13,7 +14,8 @@ def generation_llm_node(state: GraphState) -> GraphState:
         result = chain.invoke({
         "question": question,
         "relevant_contents": state.get('relevant_contents'),
-        "relevant_source": relevant_source
+        "relevant_source": relevant_source,
+        "summary": summary
         })
         
     else:
@@ -24,8 +26,8 @@ def generation_llm_node(state: GraphState) -> GraphState:
         "severity": state.get("severity", ""),
         "final_department":state.get("final_department", ""),
         "hospital_recommend": state.get("hospital_recommend"),
-        "relevant_source": relevant_source
-
+        "relevant_source": relevant_source,
+        "summary": summary
         })
 
 
@@ -39,7 +41,10 @@ def __symptom_template() :
     template = """
     당신은 전문적인 의료 지식을 바탕으로 사용자에게 안전하고 신뢰할 수 있는 설명을 
     제공하는 **의료 상담 어시스턴트** 입니다.
-    --------------------------------------
+    -------------------------------------- 
+    [대화 요약 Memory]
+    {summary}
+    
     [사용자 질문]
     {question}
 
@@ -95,6 +100,9 @@ def __hospital_template():
             당신은 이 정보를 기반으로 추천된 병원을 사용자에게 이해하기 쉽게 설명해야 합니다.
 
             --------------------------------------
+            [대화 요약 Memory]
+            {summary}
+            
             [사용자 질문]
             {question}
 

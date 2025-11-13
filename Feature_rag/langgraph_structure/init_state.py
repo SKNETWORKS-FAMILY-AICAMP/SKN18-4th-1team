@@ -6,6 +6,9 @@ class GraphState(TypedDict):
     question: str
     health_profile: dict
     
+    # memory 관련
+    summary: str
+    
     # classification 관련
     service: str # 증상분류, 병원찾기
     department: List[str]

@@ -41,7 +41,7 @@ def judgment_symtom_node(state:GraphState)-> GraphState:
         }}
     ''')
     
-    llm = model(model_name='gpt-5-mini')
+    llm = model(model_name='gpt-5-nano')
     chain = template | llm
     response = chain.invoke(
         {'question': state.get('question'), 'relevant_contents': state.get('relevant_contents')})
