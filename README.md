@@ -85,9 +85,8 @@
 </table>
 
 
-**RAG 기반 LLM과 지능형 필터링을 활용한 맞춤형 병원 추천 플랫폼**
-
 ## 🏥프로젝트 소개
+**RAG 기반 LLM과 지능형 필터링을 활용한 맞춤형 병원 추천 플랫폼**
 
 ### 🎯 목적
 사용자가 자신의 증상을 자연어로 입력하면, AI가 이를 정교하게 분석하여 질환의 가능성을 파악하고, 최적의 진료과 및 병원을 자동으로 추천해주는 지능형 의료 서비스 플랫폼입니다. 단순한 검색 기능을 넘어, 사용자의 표현 방식이나 질문 의도를 이해하고, 관련 의료 정보와 병원 데이터를 종합적으로 판단해 개인에게 가장 적합한 의료기관을 안내하는 스마트 헬스케어 솔루션입니다.
@@ -157,66 +156,6 @@
 [6] LLM → "왜 이 병원이 적합한지" 설명 생성
 ```
 
-## 🚀 빠른 시작
-
-### 🎯 처음 설정하는 팀원
-
-```bash
-# 1. 프로젝트 클론
-git clone https://github.com/SKNETWORKS-FAMILY-AICAMP/SKN18-4th-1team.git
-cd SKN18-4th-1team/Feature_rag
-
-# 2. Docker로 PostgreSQL 실행
-cd Docker_medical
-docker-compose up -d
-cd ..
-
-# 3. 가상환경 생성 및 활성화
-python -m venv .venv
-.venv\Scripts\activate  # Windows
-# source .venv/bin/activate  # Linux/Mac
-
-# 4. 의존성 설치
-pip install -r requirements.txt
-
-# 5. 환경 변수 설정
-copy .env.sample .env
-# .env 파일을 편집하여 OpenAI API 키 등을 설정
-
-# 6. 벡터 DB 초기화 (증상-질환 데이터 적재)
-python insert_hospital.py
-
-# 7. Django 서버 실행
-python main.py
-```
-
-### 🔄 기존 환경 업데이트하는 팀원
-
-```bash
-# 1. 최신 코드 가져오기
-git pull origin main
-
-# 2. 의존성 업데이트
-pip install -r requirements.txt
-
-# 3. 데이터베이스 마이그레이션
-python manage.py migrate
-
-# 4. 서버 실행
-python main.py
-```
-
-### 🚨 문제가 발생한 경우
-
-```bash
-# Docker 컨테이너 재시작
-cd Docker_medical
-docker-compose down -v
-docker-compose up -d
-
-# 벡터 DB 재초기화
-python insert_hospital.py
-```
 
 ## 🌐 서비스 접속
 
@@ -299,6 +238,7 @@ RAG 시스템의 핵심 구현:
 ## 🔧 주요 컴포넌트
 
 ### LangGraph 워크플로우 상세
+#랭그래프 사진 들어갈 자리
 
 #### 1️⃣ 질문 분류 단계 (`classify_node.py`)
 ```python
@@ -399,6 +339,12 @@ RAG 시스템의 핵심 구현:
 - content: 증상/질환 설명 텍스트
 - embedding: 벡터 임베딩 (1536차원)
 - metadata: 질환명, 진료과 등 메타데이터
+```
+
+#### 데이터 출처
+```
+질병 및 증상 데이터 : https://www.aihub.or.kr/  (AIhub 전문 의학지식 데이터)
+국내 병원 상세 정보 : https://www.data.go.kr/   (건강보험심사평가원_의료기관별상세정보서비스)
 ```
 
 ### 화면 설계 및 실행
