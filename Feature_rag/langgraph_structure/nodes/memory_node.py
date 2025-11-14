@@ -3,10 +3,8 @@ from langgraph_structure.utils import model
 from langchain_core.prompts import PromptTemplate
 
 def memory_update_node(state: GraphState) -> GraphState:
-    # 기존 summary (없으면 "")
-    prev_summary = state.get("summary", "")
+    
     llm = model(model_name='gpt-5-nano', temperature=0.1, max_tokens=1024)
-
     template = """
     아래는 이전 요약입니다:
     {prev_summary}
@@ -25,8 +23,10 @@ def memory_update_node(state: GraphState) -> GraphState:
     # 순서 중요: PromptTemplate | LLM
     chain = prompt | llm  
     
-    result = chain.invoke({"prev_summary": prev_summary, 
+    result = chain.invoke({"prev_summary": state.get("summary", ""),
                         "question": state.get("question"),
                         "final_answer":state.get("final_answer")})
+    
     state['summary'] = result.content
+    
     return state

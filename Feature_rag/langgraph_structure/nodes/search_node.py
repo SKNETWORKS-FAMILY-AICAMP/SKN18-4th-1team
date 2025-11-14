@@ -14,12 +14,11 @@ def search_vectordb(state: GraphState) -> GraphState:
     
     question = state.get("question","") # 추후 수정필요
     departments = state.get("department", [])
-    departments = [d.strip() for d in departments if d and d.strip()]
     use_filter = (
         departments
         and not all(d == "기타" for d in departments)
     )
-    
+    print(use_filter)
     if use_filter:
         filter_param = {"domain": departments}
         results = vectorstore.similarity_search_with_score(

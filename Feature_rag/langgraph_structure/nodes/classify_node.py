@@ -8,7 +8,6 @@ import json
 
 # 증상을 의미하는 질문인지, 쓸데없는 질문인지 판별하는 node
 def classify_node(state: GraphState) -> GraphState:
-    final_answer=""
     chat_prompt = ChatPromptTemplate(
         messages=[
             # system 역할
@@ -50,14 +49,16 @@ def classify_node(state: GraphState) -> GraphState:
             """),
         ]
     )
-    llm = model(model_name='gpt-5-nano')
+    llm = model(model_name='gpt-5-nano', reasoning_effort="low")
     chain = chat_prompt | llm
     response = chain.invoke({'question': state.get('question')})
     result = json.loads(response.content)
     service = result.get("service", False)
     
     if service == "irrelevant":
-        final_answer = "죄송합니다. 조금 더 상세히 설명해주시면 도와드리도록 하겠습니다."    
+        final_answer = "죄송합니다. 조금 더 상세히 설명해주시면 도와드리도록 하겠습니다."
+    else:
+        final_answer = ""  
     return {
         **state,
         "service":service,

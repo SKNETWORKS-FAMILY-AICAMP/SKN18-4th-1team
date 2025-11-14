@@ -7,12 +7,15 @@ def judgment_symtom_node(state:GraphState)-> GraphState:
     
     template =  PromptTemplate.from_template('''
         당신은 환자의 상태를 종합적으로 판단하는 **의료 전문가**입니다.  
-        아래에 주어진 ‘사용자 증상’과 ‘관련 질환 후보 정보’를 근거로,  
+        아래에 주어진 ‘사용자 증상’과 '사용자 정보‘ 그리고 관련 질환 후보 정보’를 근거로,  
         가장 가능성이 높은 질환을 선택하고, 중증도 및 진료과를 최종 확정하세요.
         ---
         ## 입력 정보
         ### 사용자 증상:
         {question}
+        
+        ### 사용자 정보:
+        {survey_result}
 
         ### 질환 후보 목록 (RAG 검색 결과)
         {relevant_contents}
@@ -41,10 +44,14 @@ def judgment_symtom_node(state:GraphState)-> GraphState:
         }}
     ''')
     
-    llm = model(model_name='gpt-5-nano')
+    llm = model(model_name='gpt-5-nano', reasoning_effort="medium")
     chain = template | llm
     response = chain.invoke(
-        {'question': state.get('question'), 'relevant_contents': state.get('relevant_contents')})
+        {'question': state.get('question'), 
+        'survey_result':state.get("survey_result"),
+        'relevant_category': state.get("relevant_category"),
+        'relevant_contents': state.get('relevant_contents')
+        })
     result = json.loads(response.content)
     return {
         **state,

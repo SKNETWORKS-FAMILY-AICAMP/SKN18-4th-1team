@@ -4,7 +4,6 @@ from langgraph_structure.utils import model
 
 def generation_llm_node(state: GraphState) -> GraphState:
     summary = state.get("summary", "")
-    history = state.get("history", [])
     service = state.get("service")
     question = state.get("question")
     relevant_source = state.get("relevant_source", [])
@@ -15,7 +14,8 @@ def generation_llm_node(state: GraphState) -> GraphState:
         "question": question,
         "relevant_contents": state.get('relevant_contents'),
         "relevant_source": relevant_source,
-        "summary": summary
+        "summary": summary,
+        'survey_result':state.get('survey_result')
         })
         
     else:
@@ -47,6 +47,9 @@ def __symptom_template() :
     
     [사용자 질문]
     {question}
+    
+    [사용자 정보]
+    {survey_result}
 
     [참고 컨텍스트(의학 문서 요약)]
     {relevant_contents}
@@ -66,7 +69,7 @@ def __symptom_template() :
     - 컨텍스트 내용이 부족하다면 일반적인 의학적 범위에서만 설명
 
     3. **증상 분석 구조화**  
-    (1) 증상 요약  
+    (1) 증상 요약
     (2) 가능한 원인 또는 관련 질환 후보 (우선순위 높은 순)  
     (3) 위험 신호 여부  
     (4) 관리 방법  

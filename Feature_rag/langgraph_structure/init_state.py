@@ -5,6 +5,7 @@ class GraphState(TypedDict):
     # 사용자 input 
     question: str
     health_profile: dict
+    survey_result: dict
     
     # memory 관련
     summary: str
