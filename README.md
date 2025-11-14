@@ -31,7 +31,7 @@
       굉장히 많은 데이터가 있을거야.. 내예감알지?
       </sub>
       <br />
-      <a href="https://github.com/seyung000" target="_blank">seyung000</a>
+      <a href="https://github.com/sonjuyeong-00" target="_blank">sonjuyeong-00</a>
     </td>
     <td align="center" valign="top">
       <img src="image/세영.png" width="150" height="150" style="object-fit: cover;" alt="박세영"/>
