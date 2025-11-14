@@ -5,7 +5,9 @@
 ![LangChain](https://img.shields.io/badge/LangChain-Latest-blue.svg)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue.svg)
 ![Docker](https://img.shields.io/badge/Docker-Enabled-blue.svg)
-## 👥 팀원
+
+## 병원어때 팀
+### 팀원 소개
 
 <table align="center">
   <tr>
