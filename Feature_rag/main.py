@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+from pathlib import Path
 from langgraph_structure.graph import create_graph_flow
 
 
@@ -12,5 +13,6 @@ def main():
     print(answer.get("final_answer", ""))
 
 if __name__ == "__main__":
-    load_dotenv()
+    env_path = Path(__file__).parent / '.env'
+    load_dotenv(dotenv_path=env_path)
     main()

@@ -9,6 +9,7 @@ from langgraph_structure.nodes.generation_llm import generation_llm_node
 from langgraph_structure.nodes.search_hospital import search_hospital_node
 from langgraph_structure.nodes.search_node import search_vectordb
 from langgraph_structure.nodes.judgment_symtom import judgment_symtom_node
+from langgraph_structure.nodes.judgment_symtom import memory_node
 
 def create_graph_flow():
     # 사용할 변수 정의
@@ -22,6 +23,7 @@ def create_graph_flow():
     graph.add_node("generation_llm_node",generation_llm_node )
     graph.add_node("search_hospital_node",search_hospital_node)
     graph.add_node("judgment_symtom_node",judgment_symtom_node)
+    graph.add_node("memory_node", memory_node)
     
     # 엣지 선언 
     graph.set_entry_point("classify_node")
