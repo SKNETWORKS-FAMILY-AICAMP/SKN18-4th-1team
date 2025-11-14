@@ -10,7 +10,7 @@
 <table align="center">
   <tr>
     <td align="center" valign="top">
-      <img src="image/민우.png" width="150" height="150" style="object-fit: cover;" alt="황민우"/>
+      <img src="image/민우.png" style="width:150px; height:150px; object-fit:cover; border-radius:10px;" alt="황민우"/>
       <br />
       <sub><b>황민우</b></sub>
       <br />
@@ -22,7 +22,7 @@
       <a href="https://github.com/minwooHwang" target="_blank">minwooHwang</a>
     </td>
     <td align="center" valign="top">
-      <img src="image/주영.png" width="150" height="150" style="object-fit: cover;" alt="손주영"/>
+      <img src="image/주영.png" style="width:150px; height:150px; object-fit:cover; border-radius:10px;" alt="손주영"/>
       <br />
       <sub><b>손주영</b></sub>
       <br />
@@ -34,29 +34,31 @@
       <a href="https://github.com/sonjuyeong-00" target="_blank">sonjuyeong-00</a>
     </td>
     <td align="center" valign="top">
-      <img src="image/세영.png" width="150" height="150" style="object-fit: cover;" alt="박세영"/>
+      <img src="image/세영.png" style="width:150px; height:150px; object-fit:cover; border-radius:10px;" alt="박세영"/>
       <br />
       <sub><b>박세영</b></sub>
       <br />
       <sub>팀원<br>
       내가 구조대원이잖아요<br>
-      다른사람은 몰라도 내가 알잖아요, 내가.</sub>
+      다른사람은 몰라도 내가 알잖아요, 내가.
+      </sub>
       <br />
       <a href="https://github.com/seyung000" target="_blank">seyung000</a>
     </td>
     <td align="center" valign="top">
-      <img src="image/이건.png" width="150" height="150" style="object-fit: cover;" alt="장이건"/>
+      <img src="image/이건.png" style="width:150px; height:150px; object-fit:cover; border-radius:10px;" alt="장이건"/>
       <br />
       <sub><b>장이건</b></sub>
       <br />
       <sub>팀원<br>
       엄마...가지마..<br>
-      데이터 준다고 했잖아...</sub>
+      데이터 준다고 했잖아...
+      </sub>
       <br />
       <a href="https://github.com/poolbbang" target="_blank">poolbbang</a>
     </td>
     <td align="center" valign="top">
-      <img src="image/담하.png" width="150" height="150" style="object-fit: cover;" alt="김담하"/>
+      <img src="image/담하.png" style="width:150px; height:150px; object-fit:cover; border-radius:10px;" alt="김담하"/>
       <br />
       <sub><b>김담하</b></sub>
       <br />
@@ -68,7 +70,7 @@
       <a href="https://github.com/DamHA-Kim" target="_blank">DamHA-Kim</a>
     </td>
     <td align="center" valign="top">
-      <img src="image/준호.png" width="150" height="150" style="object-fit: cover;" alt="조준호"/>
+      <img src="image/준호.png" style="width:150px; height:150px; object-fit:cover; border-radius:10px;" alt="조준호"/>
       <br />
       <sub><b>조준호</b></sub>
       <br />
@@ -81,6 +83,7 @@
     </td>
   </tr>
 </table>
+
 
 **RAG 기반 LLM과 지능형 필터링을 활용한 맞춤형 병원 추천 플랫폼**
 
@@ -234,16 +237,16 @@ SKN18-4th-1team/
     │   │   ├── search_node.py    # 워크플로우 # [2단계]색 노드
     │   │   ├── rewrite_que       #       # 질문 재작성 노드
     │   └─  ├── judgment_symtom.py        # [3단계] 증상 판단 노드
-    │   │   ├── search_h         y        # [4단계] 병원 검색 노드
-    │   │   ├── eval_node.pyml            # [L 컨테이너 노드
-    │   │   ├── generation_llm.py         # [립트 최종 답변 생성 노드
+    │   │   ├── searchy_node.py           # [4단계] 병원 검색 노드
+    │   │   ├── eval_node.pyml            # L 컨테이너 노드
+    │   │   ├── generation_llm.py         # 립트 최종 답변 생성 노드
     │   │   ├── memory_node.py            # 대화 기록 관리 노드
     │   main.ag/                          # RAG 시스템 구현
     │   │   ├── custom_ingest.py          # 문서 수집 및 전처리
     │   │   ├── custom_loader.py          # 커스텀 문서 로더
     │   │   ├── custom_pgvector.py        # pgvector 연동 모듈
-    │   │   └── ingest_doc.py     # 프로젝트  # 문서 벡터화 및 저장
-    ph.py                      # LangGraph 워크플로우 정의
+    │   │   └── ingest_doc.py             # 프로젝트  # 문서 벡터화 및 저장
+    ph.py                                 # LangGraph 워크플로우 정의
     │   ├── init_state.py                 # 상태 초기화 및 관리
     │   ├── utils.py                      # 공통 유틸리티 함수
     │   └── __init__.py                   # 패키지 초기화
@@ -265,8 +268,8 @@ SKN18-4th-1team/
     ├── langgraph.json                    # LangGraph 설정 파일
     ├── .env.sample                       # 환경 변수 템플릿
     ├── .env                              # 환경 변수 (Git 제외)
-    ├── .gitignore                      # Git 제외 파일 목록
-README                      # 프로젝트 문서
+    ├── .gitignore                        # Git 제외 파일 목록
+  README                                  # 프로젝트 문서
 ```
 
 ### 📂 주요 디렉토리 설명
@@ -277,7 +280,7 @@ README                      # 프로젝트 문서
 - **search_node.py**: 벡터 DB에서 유사 증상 검색
 - **judgment_symtom.py**: 증상 분석 및 질환 예측
 - **search_hospital.py**: 조건에 맞는 병원 필터링
-- **eval_node.py**: 병원 점수 계산 및 순위화
+- **eval_node.py**: 사용자의 질문이 RAG에서 검색이 잘 되는지 판단
 - **generation_llm.py**: 최종 추천 설명 생성
 - **memory_node.py**: 대화 컨텍스트 유지
 
@@ -370,8 +373,6 @@ RAG 시스템의 핵심 구현:
 - address: 주소
 - city: 시/도
 - district: 구/군
-- latitude: 위도
-- longitude: 경도
 - hospital_type: 병원 종별 (상급종합/종합/병원)
 - nursing_grade: 간호등급 (1~7등급)
 ```
@@ -399,6 +400,19 @@ RAG 시스템의 핵심 구현:
 - embedding: 벡터 임베딩 (1536차원)
 - metadata: 질환명, 진료과 등 메타데이터
 ```
+
+### 화면 설계 및 실행
+<table>
+<tr>
+<td><img src="image/1.png" width="400"></td>
+<td><img src="image/2.png" width="400"></td>
+</tr>
+<tr>
+<td><img src="image/3.png" width="400"></td>
+<td><img src="image/4.png" width="400"></td>
+</tr>
+</table>
+
 
 ### API 키 관리
 - **환경 변수**: .env 파일로 민감 정보 관리
@@ -475,27 +489,6 @@ test: 테스트 코드
 chore: 빌드 업무 수정
 ```
 
-## 📊 프로젝트 진행 상황
-- [x] 프로젝트 기획 및 설계
-- [x] 기술 스택 선정
-- [x] RAG 시스템 구현
-- [x] LangGraph 워크플로우 구축
-- [x] 병원 추천 알고리즘 개발
-- [x] Django 웹 서버 구현
-- [x] 프론트엔드 개발
-- [ ] 테스트 및 최적화
-- [ ] 배포
-
-## 🤝 기여하기
-
-1. 이 저장소를 포크합니다
-2. 새로운 기능 브랜치를 생성합니다 (`git checkout -b feature/새기능`)
-3. 변경사항을 커밋합니다 (`git commit -am '새 기능 추가'`)
-4. 브랜치에 푸시합니다 (`git push origin feature/새기능`)
-5. Pull Request를 생성합니다
-
-
-
 ## 📄 라이선스
 
 이 프로젝트는 교육용 목적으로 개발되었습니다.
@@ -503,20 +496,6 @@ chore: 빌드 업무 수정
 ## 📞 문의
 
 프로젝트에 대한 문의사항이 있으시면 이슈를 등록해주세요.
-
----
-
-**🚀 지금 바로 시작해보세요!**
-
-```bash
-git clone https://github.com/SKNETWORKS-FAMILY-AICAMP/SKN18-4th-1team.git
-cd SKN18-4th-1team/Feature_rag
-docker-compose -f Docker_medical/docker-compose.yml up -d
-python -m venv .venv && .venv\Scripts\activate
-pip install -r requirements.txt
-python insert_hospital.py
-python main.py
-```
 
 ---
 **SK Networks AI Camp 18기 4차 단위프로젝트 1팀** © 2025
