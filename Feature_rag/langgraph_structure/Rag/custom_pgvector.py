@@ -104,9 +104,18 @@ class CustomPGVector(VectorStore):
         # 필터가 있으면 WHERE 절 추가
         params = [query_emb]
         where_clauses = []
-        if filter:
-            for key, val in filter.items():
-                where_clauses.append(f"metadata @> %s::jsonb")
+        for key, val in filter.items():
+            if isinstance(val, list):
+                # 리스트 → OR 조건 생성
+                or_items = []
+                for item in val:
+                    or_items.append("metadata @> %s::jsonb")
+                    params.append(json.dumps({key: item}))
+                where_clauses.append("(" + " OR ".join(or_items) + ")")
+
+            else:
+                # 단일 문자열 → 단일 조건
+                where_clauses.append("metadata @> %s::jsonb")
                 params.append(json.dumps({key: val}))
 
         if where_clauses:

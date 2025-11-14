@@ -6,7 +6,7 @@ from typing import List
 
 class VectorIngest():
     def __init__(self, embedding_fn, 
-                file_path, content_column:str, metadata_columns:List[str], batch_size:int=300):
+                file_path, content_column:str, metadata_columns:List[str], batch_size:int=100):
         self.embedding_fn = embedding_fn
         self.file_path= file_path
         self.content_column = content_column
