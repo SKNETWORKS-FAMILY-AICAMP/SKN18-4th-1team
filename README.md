@@ -7,21 +7,87 @@
 ![Docker](https://img.shields.io/badge/Docker-Enabled-blue.svg)
 ## 👥 팀원
 
-| 이름 | 역할 | GitHub |
-|------|------|--------|
-| 팀원1 | AI/ML 개발 | [@username](https://github.com/username) |
-| 팀원2 | 백엔드 개발 | [@username](https://github.com/username) |
-| 팀원3 | 프론트엔드 개발 | [@username](https://github.com/username) |
-| 팀원4 | 데이터 엔지니어링 | [@username](https://github.com/username) |
-| 팀원5 | 데이터 엔지니어링 | [@username](https://github.com/username) |
-| 팀원6 | 데이터 엔지니어링 | [@username](https://github.com/username) |
+<table align="center">
+  <tr>
+    <td align="center" valign="top">
+      <img src="image/민우.png" width="150" height="150" style="object-fit: cover;" alt="황민우"/>
+      <br />
+      <sub><b>황민우</b></sub>
+      <br />
+      <sub>팀장<br>
+      안으로 들어가게 해주세요 제발.<br>
+      제 딸이 데이터를 기다리고 있어요!
+      </sub>
+      <br />
+      <a href="https://github.com/minwooHwang" target="_blank">minwooHwang</a>
+    </td>
+    <td align="center" valign="top">
+      <img src="image/주영.png" width="150" height="150" style="object-fit: cover;" alt="손주영"/>
+      <br />
+      <sub><b>손주영</b></sub>
+      <br />
+      <sub>부팀장<br>
+      앞으로 가지마...<br>
+      굉장히 많은 데이터가 있을거야.. 내예감알지?
+      </sub>
+      <br />
+      <a href="https://github.com/seyung000" target="_blank">seyung000</a>
+    </td>
+    <td align="center" valign="top">
+      <img src="image/세영.png" width="150" height="150" style="object-fit: cover;" alt="박세영"/>
+      <br />
+      <sub><b>박세영</b></sub>
+      <br />
+      <sub>팀원<br>
+      내가 구조대원이잖아요<br>
+      다른사람은 몰라도 내가 알잖아요, 내가.</sub>
+      <br />
+      <a href="https://github.com/seyung000" target="_blank">seyung000</a>
+    </td>
+    <td align="center" valign="top">
+      <img src="image/이건.png" width="150" height="150" style="object-fit: cover;" alt="장이건"/>
+      <br />
+      <sub><b>장이건</b></sub>
+      <br />
+      <sub>팀원<br>
+      엄마...가지마..<br>
+      데이터 준다고 했잖아...</sub>
+      <br />
+      <a href="https://github.com/poolbbang" target="_blank">poolbbang</a>
+    </td>
+    <td align="center" valign="top">
+      <img src="image/담하.png" width="150" height="150" style="object-fit: cover;" alt="김담하"/>
+      <br />
+      <sub><b>김담하</b></sub>
+      <br />
+      <sub>팀원<br>
+      나 아무렇지도 않다고!!<br>
+      내 데이터 더 어딨어?
+      </sub>
+      <br />
+      <a href="https://github.com/DamHA-Kim" target="_blank">DamHA-Kim</a>
+    </td>
+    <td align="center" valign="top">
+      <img src="image/준호.png" width="150" height="150" style="object-fit: cover;" alt="조준호"/>
+      <br />
+      <sub><b>조준호</b></sub>
+      <br />
+      <sub>팀원<br>
+      48시간 지나서 프로젝트가 계속 없으면<br>
+      여기서 내보내 줄거 같애?
+      </sub>
+      <br />
+      <a href="https://github.com/lemondear" target="_blank">lemondear</a>
+    </td>
+  </tr>
+</table>
 
 **RAG 기반 LLM과 지능형 필터링을 활용한 맞춤형 병원 추천 플랫폼**
 
 ## 🏥프로젝트 소개
 
 ### 🎯 목적
-사용자의 증상을 자연어로 입력받아 AI가 분석하고, 최적의 병원을 추천하는 지능형 의료 서비스 플랫폼입니다.
+사용자가 자신의 증상을 자연어로 입력하면, AI가 이를 정교하게 분석하여 질환의 가능성을 파악하고, 최적의 진료과 및 병원을 자동으로 추천해주는 지능형 의료 서비스 플랫폼입니다. 단순한 검색 기능을 넘어, 사용자의 표현 방식이나 질문 의도를 이해하고, 관련 의료 정보와 병원 데이터를 종합적으로 판단해 개인에게 가장 적합한 의료기관을 안내하는 스마트 헬스케어 솔루션입니다.
 
 ### 💎 핵심 가치
 - **지능형 분석**: RAG 기술을 활용한 증상 분석 및 질환 예측
