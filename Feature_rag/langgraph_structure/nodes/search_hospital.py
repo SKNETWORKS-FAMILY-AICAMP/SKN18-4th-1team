@@ -72,8 +72,9 @@ def calculate_score(grades, severity):
 ##############################################
 def search_hospital_node(state: GraphState) -> GraphState:
     """병원 추천 수행 (pool 사용)"""
-    department, region = state.get("final_department"), state.get("region")
-    severity = state.get("severity", "MID")
+    department = state.get("final_department")
+    region = state.get("region")
+    severity = state.get("severity")
 
     parsed = parse_region(region)
     search_keys = [
