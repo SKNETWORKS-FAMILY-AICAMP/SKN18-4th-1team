@@ -234,11 +234,11 @@ SKN18-4th-1team/
     ├── langgraph_structure/              # LangGraph 워크플로우 구현
     │   ├── nodes/                        # 워크플로우 노드 모듈
     │   ├── Ra─ classify_node.py          # [1단계] 질문 분류 노드
-    │   │   ├── search_node.py    # 워크플로우 # [2단계]색 노드
-    │   │   ├── rewrite_que       #       # 질문 재작성 노드
-    │   └─  ├── judgment_symtom.py        # [3단계] 증상 판단 노드
-    │   │   ├── searchy_node.py           # [4단계] 병원 검색 노드
-    │   │   ├── eval_node.pyml            # L 컨테이너 노드
+    │   │   ├── search_node.py            # 워크플로우 # [2단계]색 노드
+    │   │   ├── rewrite_que               # 질문 재작성 노드
+    │   |   ├── judgment_symtom.py        # [3단계] 증상 판단 노드
+    │   │   ├── search_node.py            # [4단계] 병원 검색 노드
+    │   │   ├── eval_node.pyml            # 컨테이너 노드
     │   │   ├── generation_llm.py         # 립트 최종 답변 생성 노드
     │   │   ├── memory_node.py            # 대화 기록 관리 노드
     │   main.ag/                          # RAG 시스템 구현
