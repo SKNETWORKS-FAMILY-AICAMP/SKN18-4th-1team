@@ -58,13 +58,19 @@
                     </div>
                     <div class="info-item">
                         <span class="info-label">주소</span>
-                        <span class="info-value">{{ user.address|default:"-" }}</span>
+                        <span class="info-value">
+                            {% if survey and survey.address %}
+                                {{ survey.address }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </span>
                     </div>
                     <div class="info-item">
                         <span class="info-label">키</span>
                         <span class="info-value">
-                            {% if user.height %}
-                                {{ user.height }} cm
+                            {% if survey and survey.height_cm %}
+                                {{ survey.height_cm }} cm
                             {% else %}
                                 -
                             {% endif %}
@@ -73,8 +79,18 @@
                     <div class="info-item">
                         <span class="info-label">몸무게</span>
                         <span class="info-value">
-                            {% if user.weight %}
-                                {{ user.weight }} kg
+                            {% if survey and survey.weight_kg %}
+                                {{ survey.weight_kg }} kg
+                            {% else %}
+                                -
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">BMI</span>
+                        <span class="info-value">
+                            {% if survey and survey.bmi %}
+                                {{ survey.bmi }} ({{ survey.get_bmi_category_display }})
                             {% else %}
                                 -
                             {% endif %}
@@ -83,9 +99,9 @@
                     <div class="info-item">
                         <span class="info-label">임신 여부</span>
                         <span class="info-value">
-                            {% if user.pregnancy == True %}
+                            {% if survey and survey.is_pregnant == True %}
                                 예
-                            {% elif user.pregnancy == False %}
+                            {% elif survey and survey.is_pregnant == False %}
                                 아니오
                             {% else %}
                                 미입력
@@ -93,8 +109,14 @@
                         </span>
                     </div>
                     <div class="info-item info-item-wide">
-                        <span class="info-label">기존 질병 이력</span>
-                        <span class="info-value multiline">{{ user.disease_history|default:"-"|linebreaksbr }}</span>
+                        <span class="info-label">지병</span>
+                        <span class="info-value multiline">
+                            {% if survey and survey.preexisting_conditions %}
+                                {{ survey.preexisting_conditions|linebreaksbr }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </span>
                     </div>
                     <div class="info-item">
                         <span class="info-label">최근 상담</span>

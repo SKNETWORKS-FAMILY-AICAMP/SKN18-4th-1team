@@ -9,7 +9,12 @@ class SurveyResponse(models.Model):
     class GenderChoices(models.TextChoices):
         MALE = 'M', '남성'
         FEMALE = 'F', '여성'
-        OTHER = 'O', '기타'
+
+    class BMICategory(models.TextChoices):
+        UNDERWEIGHT = 'UNDERWEIGHT', '저체중'
+        NORMAL = 'NORMAL', '정상'
+        OVERWEIGHT = 'OVERWEIGHT', '과체중'
+        OBESE = 'OBESE', '비만'
 
     # 사용자 모델과 1:1 연결
     # related_name='survey'를 통해 user.survey로 이 모델에 접근 가능
@@ -22,6 +27,34 @@ class SurveyResponse(models.Model):
     
     # 나이
     age = models.PositiveIntegerField()
+
+    height_cm = models.PositiveIntegerField(
+        verbose_name="키(cm)"
+    )
+
+    weight_kg = models.DecimalField(
+        verbose_name="몸무게(kg)",
+        max_digits=5,
+        decimal_places=2
+    )
+
+    bmi = models.DecimalField(
+        verbose_name="BMI",
+        max_digits=4,
+        decimal_places=1,
+        blank=True,
+        null=True,
+        editable=False
+    )
+
+    bmi_category = models.CharField(
+        verbose_name="비만도",
+        choices=BMICategory.choices,
+        max_length=20,
+        blank=True,
+        null=True,
+        editable=False
+    )
     
     # 성별
     gender = models.CharField(

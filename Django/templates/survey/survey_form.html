@@ -1,27 +1,209 @@
-<h2>서비스 이용 전 설문</h2>
-<p>더 정확한 챗봇 답변을 위해 아래 정보를 입력해주세요.</p>
+{% extends 'layout/base.html' %}
 
-<form method="post">
-    {% csrf_token %} {{ form.as_p }} <button type="submit">제출하기</button>
-</form>
+{% block title %}건강 상태 설문{% endblock %}
 
+{% block content %}
+<section class="survey-hero-section">
+    <div class="container">
+        <div class="survey-wrapper">
+            <div class="survey-hero card">
+                <div class="survey-hero-icon">
+                    <span class="survey-hero-cross">✚</span>
+                </div>
+                <div class="survey-hero-text">
+                    <p class="survey-kicker">정확한 진단을 위해</p>
+                    <h1 class="survey-title">건강 상태 설문</h1>
+                    <p class="survey-subtitle">AI가 더 정밀한 분석을 제공할 수 있도록 건강 정보를 입력해 주세요.</p>
+                </div>
+            </div>
+
+            <!-- <div class="survey-progress card">
+                <div class="survey-progress-head">
+                    <div>
+                        <p class="survey-section-label">기본 건강 정보</p>
+                        <p class="survey-section-desc">AI가 분석에 활용할 기초 데이터를 입력합니다.</p>
+                    </div>
+                    <span class="survey-step-label">2/3 단계</span>
+                </div>
+                <div class="survey-progress-dots" role="img" aria-label="2 of 3 steps complete">
+                    <span class="progress-dot complete"></span>
+                    <span class="progress-dot active"></span>
+                    <span class="progress-dot"></span>
+                </div>
+            </div> -->
+
+            <div class="survey-card card">
+                {% if form.non_field_errors %}
+                    <div class="survey-error-group">
+                        {% for error in form.non_field_errors %}
+                            <p class="survey-error">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <form method="post" class="survey-form">
+                    {% csrf_token %}
+
+                    <div class="survey-field">
+                        <label for="{{ form.address.id_for_label }}">주소 (선택)</label>
+                        {{ form.address }}
+                        {% if form.address.errors %}
+                            <p class="survey-error">{{ form.address.errors|striptags }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="survey-field">
+                        <label for="{{ form.age.id_for_label }}">나이 <span class="required-indicator">*</span></label>
+                        <div class="survey-input-wrapper">
+                            {{ form.age }}
+                        </div>
+                        {% if form.age.errors %}
+                            <p class="survey-error">{{ form.age.errors|striptags }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="survey-field survey-double">
+                        <div>
+                            <label for="{{ form.height_cm.id_for_label }}">키 (cm) <span class="required-indicator">*</span></label>
+                            {{ form.height_cm }}
+                            {% if form.height_cm.errors %}
+                                <p class="survey-error">{{ form.height_cm.errors|striptags }}</p>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <label for="{{ form.weight_kg.id_for_label }}">몸무게 (kg) <span class="required-indicator">*</span></label>
+                            {{ form.weight_kg }}
+                            {% if form.weight_kg.errors %}
+                                <p class="survey-error">{{ form.weight_kg.errors|striptags }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="survey-field">
+                        <label>BMI</label>
+                        <div class="bmi-display">
+                            <p class="bmi-value"><span id="bmi-value">-</span></p>
+                            <p class="bmi-status" id="bmi-status">키와 몸무게를 입력하면 BMI가 계산됩니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="survey-field">
+                        <div class="survey-field-head">
+                            <label>성별 <span class="required-indicator">*</span></label>
+                        </div>
+                        <div class="survey-options">
+                            {% for radio in form.gender %}
+                                <label class="survey-radio-option">
+                                    {{ radio.tag }}
+                                    <span>{{ radio.choice_label }}</span>
+                                </label>
+                            {% endfor %}
+                        </div>
+                        {% if form.gender.errors %}
+                            <p class="survey-error">{{ form.gender.errors|striptags }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="survey-field" id="pregnant-field">
+                        <label>임신 여부</label>
+                        <label class="survey-checkbox-option">
+                            {{ form.is_pregnant }}
+                            <div>
+                                <p class="checkbox-title">현재 임신 중이신가요?</p>
+                                <p class="checkbox-desc">임신 여부는 맞춤 가이드를 제공하는 데 필요합니다.</p>
+                            </div>
+                        </label>
+                        {% if form.is_pregnant.errors %}
+                            <p class="survey-error">{{ form.is_pregnant.errors|striptags }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="survey-field">
+                        <div class="survey-field-head">
+                            <label for="{{ form.preexisting_conditions.id_for_label }}">지병 (선택)</label>
+                            <p class="survey-helper-text">앓고 있는 질환이나 복용 중인 약이 있다면 알려주세요.</p>
+                        </div>
+                        {{ form.preexisting_conditions }}
+                        {% if form.preexisting_conditions.errors %}
+                            <p class="survey-error">{{ form.preexisting_conditions.errors|striptags }}</p>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="survey-submit">
+                        완료
+                        <span aria-hidden="true">›</span>
+                    </button>
+                </form>
+                <form method="post" action="{% url 'survey:survey_skip' %}" class="survey-skip-form">
+                    {% csrf_token %}
+                    <button type="submit" class="survey-skip-btn" aria-label="설문 건너뛰기">
+                        건너뛰기
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const genderSelect = document.getElementById("id_gender"); // 폼 필드의 id
-        const pregnantField = document.querySelector("label[for='id_is_pregnant']").parentNode;
+        const genderSelect = document.getElementById("id_gender");
+        const genderRadios = document.querySelectorAll("input[name='gender']");
+        const pregnantField = document.getElementById("pregnant-field");
+        const heightInput = document.getElementById("id_height_cm");
+        const weightInput = document.getElementById("id_weight_kg");
+        const bmiValue = document.getElementById("bmi-value");
+        const bmiStatus = document.getElementById("bmi-status");
 
         function togglePregnantField() {
-            if (genderSelect.value === 'F') { // '여성'을 선택했을 때
-                pregnantField.style.display = "";
+            if (!pregnantField) return;
+            let selected = '';
+
+            if (genderSelect) {
+                selected = genderSelect.value;
             } else {
-                pregnantField.style.display = "none";
+                const checked = document.querySelector("input[name='gender']:checked");
+                selected = checked ? checked.value : '';
             }
+
+            pregnantField.style.display = selected === 'F' ? '' : 'none';
         }
 
-        // 페이지 로드 시
+        function updateBmi() {
+            if (!heightInput || !weightInput || !bmiValue || !bmiStatus) return;
+            const height = parseFloat(heightInput.value);
+            const weight = parseFloat(weightInput.value);
+            if (!height || !weight || height <= 0 || weight <= 0) {
+                bmiValue.textContent = '-';
+                bmiStatus.textContent = '키와 몸무게를 입력하면 BMI가 계산됩니다.';
+                return;
+            }
+            const heightMeter = height / 100;
+            const bmi = weight / (heightMeter * heightMeter);
+            const rounded = Math.round(bmi * 10) / 10;
+            bmiValue.textContent = rounded.toFixed(1);
+
+            let status = '';
+            if (rounded < 18.5) status = '저체중';
+            else if (rounded < 23) status = '정상';
+            else if (rounded < 25) status = '과체중';
+            else status = '비만';
+            bmiStatus.textContent = `현재 상태: ${status}`;
+        }
+
         togglePregnantField();
-        
-        // 성별 변경 시
-        genderSelect.addEventListener("change", togglePregnantField);
+        updateBmi();
+
+        if (genderSelect) {
+            genderSelect.addEventListener("change", togglePregnantField);
+        } else {
+            genderRadios.forEach((radio) => radio.addEventListener("change", togglePregnantField));
+        }
+
+        heightInput?.addEventListener("input", updateBmi);
+        weightInput?.addEventListener("input", updateBmi);
     });
 </script>
+{% endblock %}

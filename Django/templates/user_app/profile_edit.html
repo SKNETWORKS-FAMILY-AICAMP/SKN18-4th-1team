@@ -28,49 +28,90 @@
         <form method="post" class="profile-edit-form">
             {% csrf_token %}
 
-            {% if form.errors %}
+            {% if user_form.errors or survey_form.errors %}
             <div class="form-error-banner">
-                {% for field in form %}
+                {% for field in user_form %}
                     {% for error in field.errors %}
                         <p>{{ error }}</p>
                     {% endfor %}
                 {% endfor %}
+                {% for field in survey_form %}
+                    {% for error in field.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in user_form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+                {% for error in survey_form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
             </div>
             {% endif %}
 
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
-                    {{ form.name }}
+            <div class="form-section">
+                <h3>기본 정보</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="{{ user_form.name.id_for_label }}">{{ user_form.name.label }}</label>
+                        {{ user_form.name }}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ user_form.email.id_for_label }}">{{ user_form.email.label }}</label>
+                        {{ user_form.email }}
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
-                    {{ form.email }}
-                </div>
-                <div class="form-group">
-                    <label for="{{ form.address.id_for_label }}">{{ form.address.label }}</label>
-                    {{ form.address }}
-                </div>
-                <div class="form-group">
-                    <label for="{{ form.height.id_for_label }}">{{ form.height.label }}</label>
-                    {{ form.height }}
-                </div>
-                <div class="form-group">
-                    <label for="{{ form.weight.id_for_label }}">{{ form.weight.label }}</label>
-                    {{ form.weight }}
-                </div>
-                <div class="form-group">
-                    <label for="{{ form.pregnancy.id_for_label }}">{{ form.pregnancy.label }}</label>
-                    {{ form.pregnancy }}
-                </div>
-                <div class="form-group form-group-wide">
-                    <label for="{{ form.disease_history.id_for_label }}">{{ form.disease_history.label }}</label>
-                    {{ form.disease_history }}
+            </div>
+
+            <div class="form-section">
+                <h3>건강 정보</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="{{ survey_form.age.id_for_label }}">{{ survey_form.age.label }}</label>
+                        {{ survey_form.age }}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ survey_form.height_cm.id_for_label }}">{{ survey_form.height_cm.label }}</label>
+                        {{ survey_form.height_cm }}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ survey_form.weight_kg.id_for_label }}">{{ survey_form.weight_kg.label }}</label>
+                        {{ survey_form.weight_kg }}
+                    </div>
+                    <div class="form-group form-group-wide">
+                        <label>{{ survey_form.gender.label }}</label>
+                        <div class="survey-options">
+                            {% for radio in survey_form.gender %}
+                                <label class="survey-radio-option">
+                                    {{ radio.tag }}
+                                    <span>{{ radio.choice_label }}</span>
+                                </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ survey_form.is_pregnant.id_for_label }}">{{ survey_form.is_pregnant.label }}</label>
+                        <label class="survey-checkbox-option">
+                            {{ survey_form.is_pregnant }}
+                            <div>
+                                <p class="checkbox-title">현재 임신 중이신가요?</p>
+                                <p class="checkbox-desc">임신 여부는 맞춤 가이드를 제공하는 데 필요합니다.</p>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="form-group form-group-wide">
+                        <label for="{{ survey_form.preexisting_conditions.id_for_label }}">{{ survey_form.preexisting_conditions.label }}</label>
+                        {{ survey_form.preexisting_conditions }}
+                    </div>
+                    <div class="form-group form-group-wide">
+                        <label for="{{ survey_form.address.id_for_label }}">{{ survey_form.address.label }}</label>
+                        {{ survey_form.address }}
+                    </div>
                 </div>
             </div>
 
             <div class="profile-actions form-actions">
-                <button type="submit" class="pill-btn primary">저장</button>
+                <button type="submit" class="pill-btn primary">수정</button>
                 <a href="{% url 'accounts:account_profile' %}" class="pill-btn ghost">취소</a>
             </div>
         </form>

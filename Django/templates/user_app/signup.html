@@ -65,7 +65,7 @@
 
     <p class="auth-switch">
         이미 계정이 있으신가요?
-        <a href="{% url 'accounts:login' %}">로그인</a>
+        <a class="nav-btn ghost" href="{% url 'accounts:login' %}?next={{ request.get_full_path|urlencode }}">로그인</a>
     </p>
 </section>
 {% endblock %}
