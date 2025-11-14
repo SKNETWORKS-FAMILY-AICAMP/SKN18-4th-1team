@@ -39,7 +39,8 @@ def create_graph_flow():
         {
             END : END,
             "rewrite_question_node":"rewrite_question_node",
-            "judgment_symtom_node":"judgment_symtom_node"
+            "judgment_symtom_node":"judgment_symtom_node",
+            "generation_llm_node":"generation_llm_node"
                 
         }
     )

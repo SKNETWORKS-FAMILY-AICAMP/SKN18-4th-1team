@@ -1,28 +1,9 @@
 import json
-
 from django.shortcuts import render
-
 from user_app.models import ChatMessage, ChatSession
-
 from .services import analyze_symptoms
 
-
-def _format_result_for_log(result: dict) -> str:
-    """Convert the analysis payload into a readable text block for history."""
-    lines = []
-    for disease in result.get('diseases', []):
-        lines.append(f"[질병] {disease['name']}: {disease['description']}")
-        if disease.get('recommendations'):
-            for tip in disease['recommendations']:
-                lines.append(f"  - {tip}")
-    for hospital in result.get('hospitals', []):
-        lines.append(
-            f"[병원] {hospital['name']} ({hospital.get('specialty', '')}) - {hospital.get('address', '')}"
-        )
-    if not lines:
-        lines.append(json.dumps(result, ensure_ascii=False))
-    return "\n".join(lines)
-
+# (헬퍼 함수들은 그대로 유지하거나 필요 시 수정)
 
 def _get_or_create_session_for_user(request):
     if not request.session.session_key:
@@ -42,8 +23,7 @@ def _get_or_create_session_for_user(request):
 
 def _store_message(request, role, content):
     """
-    로그인 상태면 DB에, 아니면 세션에 기록하여 새로고침 시에는 사라지지만
-    로그인 후에는 시그널이 DB로 옮길 수 있게 한다.
+    메시지 저장: 로그인(DB) / 비로그인(Session) 분기 처리
     """
     if request.user.is_authenticated:
         chat_session = _get_or_create_session_for_user(request)
@@ -56,42 +36,50 @@ def _store_message(request, role, content):
 
 
 def index(request):
-    """메인 페이지 뷰 - 증상 입력 및 분석 결과 표시 (순수 Django 서버 사이드 렌더링)"""
-    result = None
-    symptoms = ''
+    """
+    메인 뷰: 채팅 기록을 불러오고, 새로운 질문을 처리합니다.
+    """
     error = None
     
+    # 1. POST 요청 처리 (사용자가 질문을 보냈을 때)
     if request.method == 'POST':
         symptoms = request.POST.get('symptoms', '').strip()
         
         if not symptoms:
-            error = '증상을 입력해주세요.'
+            error = '내용을 입력해주세요.'
         else:
             try:
-                result = analyze_symptoms(symptoms)
+                # (1) 사용자 질문 저장
                 _store_message(request, ChatMessage.Role.USER, symptoms)
+                
+                # (2) AI 분석 수행 (services.py 호출)
+                ai_response = analyze_symptoms(symptoms)
+                
+                # (3) AI 답변 저장
                 _store_message(
                     request,
                     ChatMessage.Role.ASSISTANT,
-                    _format_result_for_log(result),
+                    ai_response
                 )
             except Exception as e:
-                error = f'분석 중 오류가 발생했습니다: {str(e)}'
-    
-    if request.user.is_authenticated:
-        chat_sessions = (
-            ChatSession.objects.filter(user=request.user)
-            .prefetch_related("messages")
-            .order_by("-created_at")
-        )
-    else:
-        chat_sessions = ChatSession.objects.none()
+                error = f'오류가 발생했습니다: {str(e)}'
 
+    # 2. 대화 기록 불러오기 (GET, POST 모두 실행)
+    # 화면에 채팅창을 그려주기 위해 저장된 모든 대화를 가져옵니다.
+    chat_history = []
+    if request.user.is_authenticated:
+        # 로그인 유저: DB에서 해당 세션의 메시지를 시간순으로 가져옴
+        chat_session = _get_or_create_session_for_user(request)
+        chat_history = ChatMessage.objects.filter(session=chat_session).order_by('id') 
+        # (만약 models.py에 created_at이 있다면 .order_by('created_at')을 추천합니다)
+    else:
+        # 비로그인 유저: 세션 메모리에서 가져옴
+        chat_history = request.session.get('chat_history', [])
+
+    # 3. 템플릿으로 데이터 전달
     context = {
-        'symptoms': symptoms,
-        'result': result,
+        'chat_history': chat_history,  # 이제 result 하나가 아니라 전체 기록을 보냅니다
         'error': error,
-        'chat_sessions': chat_sessions,
     }
     
     return render(request, 'medical_app/index.html', context)
@@ -100,4 +88,3 @@ def index(request):
 def home(request):
     """랜딩 페이지"""
     return render(request, 'medical_app/home.html')
-
