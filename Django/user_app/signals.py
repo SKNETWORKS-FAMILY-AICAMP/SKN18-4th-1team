@@ -16,16 +16,20 @@ def link_chat_session(sender, user, request, **kwargs):
         request.session.save()
 
     session_key = request.session.session_key
-    chat_session, _ = ChatSession.objects.get_or_create(
-        session_key=session_key,
-        defaults={'user': user},
-    )
+    pending_history = request.session.pop('chat_history', None)
 
-    if chat_session.user_id is None:
+    chat_session = ChatSession.objects.filter(session_key=session_key).first()
+    if chat_session is None:
+        if not pending_history:
+            return
+        chat_session = ChatSession.objects.create(
+            session_key=session_key,
+            user=user,
+        )
+    elif chat_session.user_id is None:
         chat_session.user = user
         chat_session.save(update_fields=['user'])
 
-    pending_history = request.session.pop('chat_history', None)
     if pending_history:
         messages = [
             ChatMessage(

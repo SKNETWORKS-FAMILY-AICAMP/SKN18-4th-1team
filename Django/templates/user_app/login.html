@@ -1,6 +1,7 @@
 {% extends "layout/base.html" %}
 {% load static %}
 {% block title %}로그인{% endblock %}
+{% block body_class %}login-body{% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/login.css' %}">
 {% endblock %}
@@ -90,7 +91,11 @@
 
     <p class="signup-link">
         계정이 없으신가요?
-        <a href="{% url 'accounts:signup' %}">회원가입</a>
+        {% if request.GET.next %}
+            <a href="{% url 'accounts:signup' %}?next={{ request.GET.next|urlencode }}">회원가입</a>
+        {% else %}
+            <a href="{% url 'accounts:signup' %}">회원가입</a>
+        {% endif %}
     </p>
     <a class="home-return-btn" href="{% url 'medical_app:home' %}">홈페이지로 돌아가기</a>
 </section>
@@ -98,9 +103,4 @@
 
 {% block extra_js %}
 {{ block.super }}
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.body.classList.add('login-body');
-    });
-</script>
 {% endblock %}

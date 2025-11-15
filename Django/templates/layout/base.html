@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
-<body class="layout-body">
+<body class="layout-body {% block body_class %}{% endblock %}">
     {% with current=request.resolver_match.url_name|default:'' %}
     <nav class="global-nav">
         <div class="nav-right">

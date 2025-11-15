@@ -500,6 +500,17 @@ body {
     grid-column: 1 / -1;
 }
 
+.info-item.email-item {
+    grid-column: span 2;
+    min-width: 320px;
+}
+
+@media (max-width: 768px) {
+    .info-item.email-item {
+        grid-column: 1 / -1;
+    }
+}
+
 .info-value.multiline {
     white-space: pre-line;
 }
@@ -606,6 +617,37 @@ body {
     font-weight: 600;
 }
 
+.history-card-toggle {
+    border: none;
+    background: rgba(15, 23, 42, 0.05);
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    cursor: pointer;
+    color: #0f172a;
+    transition: background 0.2s ease;
+}
+
+.history-card-toggle:hover {
+    background: rgba(15, 23, 42, 0.1);
+}
+
+.history-card-toggle .history-toggle-icon {
+    font-size: 0.9rem;
+    transition: transform 0.2s ease;
+}
+
+.history-card.collapsed .history-messages {
+    display: none;
+}
+
+.history-card.collapsed .history-toggle-icon {
+    transform: rotate(180deg);
+}
+
 .history-list {
     display: flex;
     flex-direction: column;
@@ -622,9 +664,15 @@ body {
 .history-top {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+   	align-items: flex-start;
     gap: 0.8rem;
     margin-bottom: 1rem;
+}
+
+.history-top-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .history-date {

@@ -30,94 +30,100 @@
                 </div>
 
         <div class="profile-info-grid">
-                    <div class="info-item">
-                        <span class="info-label">아이디</span>
-                        <span class="info-value">
-                            {% if user.username %}
-                                {{ user.username }}
-                            {% else %}
-                                {{ user.email }}
-                            {% endif %}
-                        </span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">이름</span>
-                        <span class="info-value">
-                            {% if user.name %}
-                                {{ user.name }}
-                            {% elif user.last_name and user.first_name %}
-                                {{ user.last_name }}{{ user.first_name }}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">이메일</span>
-                        <span class="info-value">{{ user.email }}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">주소</span>
-                        <span class="info-value">
-                            {% if survey and survey.address %}
-                                {{ survey.address }}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">키</span>
-                        <span class="info-value">
-                            {% if survey and survey.height_cm %}
-                                {{ survey.height_cm }} cm
-                            {% else %}
-                                -
-                            {% endif %}
-                        </span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">몸무게</span>
-                        <span class="info-value">
-                            {% if survey and survey.weight_kg %}
-                                {{ survey.weight_kg }} kg
-                            {% else %}
-                                -
-                            {% endif %}
-                        </span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">BMI</span>
-                        <span class="info-value">
-                            {% if survey and survey.bmi %}
-                                {{ survey.bmi }} ({{ survey.get_bmi_category_display }})
-                            {% else %}
-                                -
-                            {% endif %}
-                        </span>
-                    </div>
+    <!-- 이름 -->
+    <div class="info-item">
+        <span class="info-label">이름</span>
+        <span class="info-value">
+            {% if user.name %}
+                {{ user.name }}
+            {% elif user.last_name and user.first_name %}
+                {{ user.last_name }}{{ user.first_name }}
+            {% else %}
+                -
+            {% endif %}
+        </span>
+    </div>
+
+    <!-- 이메일 -->
+    <div class="info-item email-item">
+        <span class="info-label">이메일</span>
+        <span class="info-value">{{ user.email }}</span>
+    </div>
+
+    <!-- 주소 (전체 폭) -->
+    <div class="info-item info-item-wide">
+        <span class="info-label">주소</span>
+        <span class="info-value">
+            {% if survey and survey.address %}
+                {{ survey.address }}
+            {% else %}
+                -
+            {% endif %}
+        </span>
+    </div>
+
+    <!-- 키 -->
+    <div class="info-item">
+        <span class="info-label">키</span>
+        <span class="info-value">
+            {% if survey and survey.height_cm %}
+                {{ survey.height_cm }} cm
+            {% else %}
+                -
+            {% endif %}
+        </span>
+    </div>
+
+    <!-- 몸무게 -->
+    <div class="info-item">
+        <span class="info-label">몸무게</span>
+        <span class="info-value">
+            {% if survey and survey.weight_kg %}
+                {{ survey.weight_kg }} kg
+            {% else %}
+                -
+            {% endif %}
+        </span>
+    </div>
+
+    <!-- BMI -->
+    <div class="info-item">
+        <span class="info-label">BMI</span>
+        <span class="info-value">
+            {% if survey and survey.bmi %}
+                {{ survey.bmi }} ({{ survey.get_bmi_category_display }})
+            {% else %}
+                -
+            {% endif %}
+        </span>
+    </div>
+
+    <!-- 임신 여부 -->
                     <div class="info-item">
                         <span class="info-label">임신 여부</span>
                         <span class="info-value">
-                            {% if survey and survey.is_pregnant == True %}
+                            {% if survey and survey.pregnancy == True %}
                                 예
-                            {% elif survey and survey.is_pregnant == False %}
+                            {% elif survey and survey.pregnancy == False %}
                                 아니오
                             {% else %}
                                 미입력
                             {% endif %}
                         </span>
                     </div>
-                    <div class="info-item info-item-wide">
-                        <span class="info-label">지병</span>
-                        <span class="info-value multiline">
-                            {% if survey and survey.preexisting_conditions %}
-                                {{ survey.preexisting_conditions|linebreaksbr }}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </span>
-                    </div>
+
+    <!-- 지병 (전체 폭) -->
+    <div class="info-item info-item-wide">
+        <span class="info-label">지병</span>
+        <span class="info-value multiline">
+            {% if survey and survey.preexisting_conditions %}
+                {{ survey.preexisting_conditions|linebreaksbr }}
+            {% else %}
+                -
+            {% endif %}
+        </span>
+    </div>
+
                     <div class="info-item">
                         <span class="info-label">최근 상담</span>
                         <span class="info-value">
@@ -128,7 +134,7 @@
                             {% endif %}
                         </span>
                     </div>
-                </div>
+        </div>
 
         <div class="profile-actions">
             <a href="{% url 'medical_app:index' %}" class="pill-btn ghost">홈으로</a>
@@ -146,41 +152,54 @@
             <span class="section-count">{{ chat_sessions|length }}건</span>
         </div>
 
-        {% if chat_sessions %}
-            <div class="history-list">
-                {% for session in chat_sessions %}
-                    <article class="history-card" id="session-{{ session.id }}">
-                        <header class="history-top">
-                            <div>
-                                <p class="history-date">{{ session.created_at|date:"Y.m.d H:i" }}</p>
-                                {% if session.updated_at %}
-                                    <p class="history-updated">업데이트 {{ session.updated_at|date:"m.d H:i" }}</p>
-                                {% endif %}
-                            </div>
-                            <span class="pill-badge subtle">세션 {{ forloop.counter }}</span>
-                        </header>
-                        <div class="history-messages">
-                            {% for message in session.messages.all %}
-                                <div class="history-message history-message-{{ message.role }}">
-                                    <div class="history-message-meta">
-                                        <span class="history-role">{{ message.get_role_display }}</span>
-                                        <span class="history-time">{{ message.created_at|date:"H:i" }}</span>
-                                    </div>
-                                    <p>{{ message.content|linebreaksbr }}</p>
+        <div class="history-content">
+            {% if chat_sessions %}
+                <div class="history-list">
+                    {% for session in chat_sessions %}
+                        <article class="history-card" id="session-{{ session.id }}">
+                            <header class="history-top">
+                                <div>
+                                    <p class="history-date">{{ session.created_at|date:"Y.m.d H:i" }}</p>
+                                    {% if session.updated_at %}
+                                        <p class="history-updated">업데이트 {{ session.updated_at|date:"m.d H:i" }}</p>
+                                    {% endif %}
                                 </div>
-                            {% empty %}
-                                <p class="history-empty">메시지가 없습니다.</p>
-                            {% endfor %}
-                        </div>
-                    </article>
-                {% endfor %}
-            </div>
-        {% else %}
-            <div class="history-empty-card">
-                <p>아직 저장된 상담 기록이 없습니다.</p>
-                <a href="{% url 'medical_app:index' %}" class="pill-btn primary">첫 상담 시작하기</a>
-            </div>
-        {% endif %}
+                                <div class="history-top-actions">
+                                    <span class="pill-badge subtle">세션 {{ forloop.counter }}</span>
+                                    <button
+                                        type="button"
+                                        class="history-card-toggle"
+                                        data-target="session-{{ session.id }}"
+                                        aria-expanded="true"
+                                    >
+                                        <span class="toggle-label">접기</span>
+                                        <span class="history-toggle-icon">⌃</span>
+                                    </button>
+                                </div>
+                            </header>
+                            <div class="history-messages">
+                                {% for message in session.messages.all %}
+                                    <div class="history-message history-message-{{ message.role }}">
+                                        <div class="history-message-meta">
+                                            <span class="history-role">{{ message.get_role_display }}</span>
+                                            <span class="history-time">{{ message.created_at|date:"H:i" }}</span>
+                                        </div>
+                                        <p>{{ message.content|linebreaksbr }}</p>
+                                    </div>
+                                {% empty %}
+                                    <p class="history-empty">메시지가 없습니다.</p>
+                                {% endfor %}
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="history-empty-card">
+                    <p>아직 저장된 상담 기록이 없습니다.</p>
+                    <a href="{% url 'medical_app:index' %}" class="pill-btn primary">첫 상담 시작하기</a>
+                </div>
+            {% endif %}
+        </div>
     </div>
 </section>
 
@@ -205,6 +224,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    document.querySelectorAll('.history-card-toggle').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const targetId = button.getAttribute('data-target');
+            const card = document.getElementById(targetId);
+            if (!card) return;
+            const collapsed = card.classList.toggle('collapsed');
+            button.setAttribute('aria-expanded', (!collapsed).toString());
+            const label = button.querySelector('.toggle-label');
+            if (label) {
+                label.textContent = collapsed ? '펼치기' : '접기';
+            }
+        });
+    });
 });
 </script>
 {% endblock %}

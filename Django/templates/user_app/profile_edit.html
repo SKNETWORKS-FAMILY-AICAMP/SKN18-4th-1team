@@ -56,7 +56,7 @@
                         <label for="{{ user_form.name.id_for_label }}">{{ user_form.name.label }}</label>
                         {{ user_form.name }}
                     </div>
-                    <div class="form-group">
+                    <div class="form-group form-group-wide email-field">
                         <label for="{{ user_form.email.id_for_label }}">{{ user_form.email.label }}</label>
                         {{ user_form.email }}
                     </div>
@@ -90,9 +90,9 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="{{ survey_form.is_pregnant.id_for_label }}">{{ survey_form.is_pregnant.label }}</label>
+                        <label for="{{ survey_form.pregnancy.id_for_label }}">{{ survey_form.pregnancy.label }}</label>
                         <label class="survey-checkbox-option">
-                            {{ survey_form.is_pregnant }}
+                            {{ survey_form.pregnancy }}
                             <div>
                                 <p class="checkbox-title">현재 임신 중이신가요?</p>
                                 <p class="checkbox-desc">임신 여부는 맞춤 가이드를 제공하는 데 필요합니다.</p>

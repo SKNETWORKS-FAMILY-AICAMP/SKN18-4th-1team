@@ -26,7 +26,7 @@ def login_view(request):
             require_https=request.is_secure(),
         ):
             return redirect(redirect_to)
-        return redirect('medical_app:index')
+        return redirect('medical_app:home')
 
     form = EmailOrUsernameAuthenticationForm(request=request, data=request.POST or None)
     if request.method == 'POST' and form.is_valid():

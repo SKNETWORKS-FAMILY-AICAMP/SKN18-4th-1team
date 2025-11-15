@@ -63,7 +63,7 @@ class SurveyResponse(models.Model):
     )
     
     # 임신 여부 (기본값 False)
-    is_pregnant = models.BooleanField(default=False)
+    pregnancy = models.BooleanField(default=False)
     
     # 지병 여부 (간단한 텍스트 입력)
     # blank=True, null=True: 선택 사항(없을 수도 있음)
@@ -82,3 +82,6 @@ class SurveyResponse(models.Model):
 
     def __str__(self):
         return f"{self.user.username}의 설문"
+
+    class Meta:
+        db_table = 'survey_response'

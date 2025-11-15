@@ -3,18 +3,26 @@ from django.shortcuts import render
 from user_app.models import ChatMessage, ChatSession
 from .services import analyze_symptoms
 
-# (헬퍼 함수들은 그대로 유지하거나 필요 시 수정)
 
-def _get_or_create_session_for_user(request):
+def _get_or_create_session_for_user(request, *, create=True):
+    """
+    인증된 사용자를 위한 ChatSession을 가져온다.
+    create=False인 경우에는 존재하지 않으면 None을 반환한다.
+    """
     if not request.session.session_key:
         request.session.save()
 
-    chat_session, _ = ChatSession.objects.get_or_create(
-        session_key=request.session.session_key,
-        defaults={'user': request.user},
-    )
+    chat_session = ChatSession.objects.filter(
+        session_key=request.session.session_key
+    ).first()
 
-    if chat_session.user_id is None and request.user.is_authenticated:
+    if chat_session is None and create:
+        chat_session = ChatSession.objects.create(
+            session_key=request.session.session_key,
+            user=request.user if request.user.is_authenticated else None,
+        )
+
+    if chat_session and chat_session.user_id is None and request.user.is_authenticated:
         chat_session.user = request.user
         chat_session.save(update_fields=['user'])
 
@@ -69,8 +77,9 @@ def index(request):
     chat_history = []
     if request.user.is_authenticated:
         # 로그인 유저: DB에서 해당 세션의 메시지를 시간순으로 가져옴
-        chat_session = _get_or_create_session_for_user(request)
-        chat_history = ChatMessage.objects.filter(session=chat_session).order_by('id') 
+        chat_session = _get_or_create_session_for_user(request, create=False)
+        if chat_session:
+            chat_history = ChatMessage.objects.filter(session=chat_session).order_by('id')
         # (만약 models.py에 created_at이 있다면 .order_by('created_at')을 추천합니다)
     else:
         # 비로그인 유저: 세션 메모리에서 가져옴

@@ -12,7 +12,7 @@ class SurveyForm(forms.ModelForm):
             'height_cm',
             'weight_kg',
             'gender',
-            'is_pregnant',
+            'pregnancy',
             'preexisting_conditions',
             'address',
         ]
@@ -23,7 +23,7 @@ class SurveyForm(forms.ModelForm):
             'height_cm': '키 (cm)',
             'weight_kg': '몸무게 (kg)',
             'gender': '성별',
-            'is_pregnant': '임신 여부',
+            'pregnancy': '임신 여부',
             'preexisting_conditions': '지병 (있을 경우 기재)',
             'address': '주소 (선택)',
         }
