@@ -1,9 +1,7 @@
 from langchain_core.prompts import PromptTemplate
 from langgraph_structure.init_state import GraphState
-from langgraph.graph import END
 from langgraph_structure.utils import model
 import json
-
 def evaluate_chunk_node(state: GraphState) -> GraphState:
     """데이터베이스에서 추출한 chunk가 질문과 연관되어있는지 평가하는 함수"""
     
@@ -12,7 +10,6 @@ def evaluate_chunk_node(state: GraphState) -> GraphState:
     relevant_contents: list[str] = []
     relevant_category: list[str] = []
     relevance_scores: list[float] = []
-    feedback_messages: list[str] = []
     relevant_source= []
     
     relevance_prompt = PromptTemplate.from_template(
@@ -22,10 +19,9 @@ def evaluate_chunk_node(state: GraphState) -> GraphState:
         당신은 **의료 전문 어시스턴트** 입니다.
         아래에 주어진 '질문'과 '문서'를 보고, 문서가 질문에 얼마나 관련 있는지를 판단해라.
         
-        ## 출력 형식 (JSON)
+        ## 출력 형식 (JSON 형태로 !!)
         {{
-            "evaluation_score": (0~100),
-            "evaluation_detail": "간단한 이유 설명"
+            "evaluation_score": (0~100)
         }}
         ---
         # 질문:
@@ -35,7 +31,7 @@ def evaluate_chunk_node(state: GraphState) -> GraphState:
         {chunk}
         '''
     )
-    llm = model("gpt-4o-mini", temperature=0.0)
+    llm = model("gpt-5-nano", temperature=0.0)
     chain = relevance_prompt | llm
     for doc in state.get("search_chunks"):
         chunk = doc.page_content
@@ -44,21 +40,13 @@ def evaluate_chunk_node(state: GraphState) -> GraphState:
         )
         result = json.loads(response.content)
         score = result.get("evaluation_score", 0)
-        if score >= 60:
+        if score >= 50:
             relevant_category.append(doc.metadata["domain"])
             relevant_source.append(doc.metadata['source_spec'])
             relevant_contents.append(chunk)
             relevance_scores.append(score)
-        else:
-            detail = result.get("evaluation_detail")
-            if detail:
-                feedback_messages.append(detail)
-        
-    retrieval_question = not bool(relevant_contents)
-        
-    if retrieval_question and state.get("max_token"):
-        final_answer = "죄송합니다. 조금 더 상세히 설명해주시면 도와드리도록 하겠습니다."
-        
+            
+    check_web = not bool(relevant_contents)
     avg_relevance = sum(relevance_scores) / len(relevance_scores) if relevance_scores else 0.0
         
     return {
@@ -66,17 +54,15 @@ def evaluate_chunk_node(state: GraphState) -> GraphState:
         "relevant_source":relevant_source,
         "relevant_category":relevant_category,
         "relevant_contents": relevant_contents,
-        "retrieval_question": retrieval_question,
+        "check_web": check_web,
         "avg_relevance": avg_relevance,
-        "feedback_messages": "\n".join(feedback_messages),
         "final_answer": final_answer
     }
     
 def classify_retrieval(state: GraphState) -> str:
-    if state["retrieval_question"]:
-        if state.get("max_token"):
-            return END  
-        return "rewrite_question_node"
+    if state["check_web"]:
+        return "web_search_node"
+    
     # 2) service 종류에 따라 라우팅
     service = state.get("service")
     if service == "symptom":

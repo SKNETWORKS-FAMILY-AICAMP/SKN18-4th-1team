@@ -1,4 +1,3 @@
-
 from dotenv import load_dotenv
 load_dotenv()
 from langgraph_structure.utils import set_embedding_model

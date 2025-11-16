@@ -50,7 +50,7 @@ class CustomPGVector(VectorStore):
     def similarity_search(
         self,
         query: str,
-        k: int = 4,
+        k: int = 5,
         filter: Optional[Dict[str, Any]] = None,
     ) -> List[Document]:
         query_emb = self.embedding_fn.embed_query(query)
@@ -86,7 +86,7 @@ class CustomPGVector(VectorStore):
     def similarity_search_with_score(
         self,
         query: str,
-        k: int = 4,
+        k: int = 5,
         filter: Optional[Dict[str, Any]] = None,
     ) -> List[Tuple[Document, float]]:
         """

@@ -326,5 +326,11 @@ $RECYCLE.BIN/
 .history
 
 # data
-Feature_rag/Data/*
-!Feature_rag/Data/.gitkeep
+Data/*
+!Data/.gitkeep
+
+# Docker
+database
+
+# langgraph
+.langgraph_api

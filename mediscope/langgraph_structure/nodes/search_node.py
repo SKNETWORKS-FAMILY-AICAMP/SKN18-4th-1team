@@ -12,9 +12,12 @@ def search_vectordb(state: GraphState) -> GraphState:
     embed = set_embedding_model()
     vectorstore = CustomPGVector(embedding_fn=embed)
     
-    question = state.get("question","") # 추후 수정필요
-    departments = state.get("department", [])
-    departments = [d.strip() for d in departments if d and d.strip()]
+    question = state.get("rewrite_question","") # 추후 수정필요
+    raw_dep = state.get("department", [])
+    if isinstance(raw_dep, str):
+        departments = [raw_dep]
+    else:
+        departments = [d.strip() for d in raw_dep if d]
     use_filter = (
         departments
         and not all(d == "기타" for d in departments)
@@ -45,14 +48,4 @@ def search_vectordb(state: GraphState) -> GraphState:
         "mean_similarity_score": mean_similarity_score,
         "search_chunks":search_chunks
     }
-'''
-if __name__ == "__main__":
-    result = search_vectordb({
-        'question' : "",
-        'department': ['내과']
-    })
-    print(result["search_chunks"], result['mean_similarity_score'])
 
-'''    
-
-        
