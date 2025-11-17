@@ -51,11 +51,10 @@ def create_graph_flow():
         "web_search_node",
         check_quit,
         {
-            END : END,
-            "judgment_symtom_node":"judgment_symtom_node",
-            "generation_llm_node":"generation_llm_node"
-                
-        }
+            END: END,
+            "judgment_symtom_node": "judgment_symtom_node",
+            "generation_llm_node": "generation_llm_node",
+        },
     )
     graph.add_edge("judgment_symtom_node",'search_hospital_node')
     graph.add_edge("search_hospital_node", "generation_llm_node")

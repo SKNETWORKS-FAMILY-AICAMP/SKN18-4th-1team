@@ -1,8 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.http import require_POST
 
 from survey.forms import SurveyForm
 from survey.models import SurveyResponse
@@ -66,6 +68,7 @@ def signup_view(request):
     return render(request, 'user_app/signup.html', {'form': form})
 
 
+@ensure_csrf_cookie
 @login_required
 def mypage_view(request):
     """
@@ -139,3 +142,15 @@ def profile_edit_view(request):
             'survey_form': survey_form,
         },
     )
+
+
+@login_required
+@require_POST
+def delete_chat_session(request, pk):
+    """
+    사용자가 자신의 상담 세션을 삭제할 수 있는 엔드포인트.
+    """
+    chat_session = get_object_or_404(ChatSession, pk=pk, user=request.user)
+    chat_session.delete()
+    messages.success(request, '상담 이력이 삭제되었습니다.')
+    return redirect('accounts:account_profile')

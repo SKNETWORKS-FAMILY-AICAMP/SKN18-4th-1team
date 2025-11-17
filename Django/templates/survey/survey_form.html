@@ -3,6 +3,32 @@
 {% block title %}건강 상태 설문{% endblock %}
 
 {% block content %}
+<style>
+.survey-action-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 1.25rem;
+}
+.survey-action-row .survey-skip-btn {
+    background: #ffe4e4;
+    color: #b3261e;
+    border: 1px solid #f5b6b6;
+    padding: 0.95rem 1.4rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.survey-action-row .survey-skip-btn:hover {
+    background: #ffd2d2;
+}
+</style>
 <section class="survey-hero-section">
     <div class="container">
         <div class="survey-wrapper">
@@ -129,16 +155,21 @@
                         {% endif %}
                     </div>
 
-                    <button type="submit" class="survey-submit">
-                        완료
-                        <span aria-hidden="true">›</span>
-                    </button>
-                </form>
-                <form method="post" action="{% url 'survey:survey_skip' %}" class="survey-skip-form">
-                    {% csrf_token %}
-                    <button type="submit" class="survey-skip-btn" aria-label="설문 건너뛰기">
-                        건너뛰기
-                    </button>
+                    <div class="survey-action-row">
+                        <button
+                            type="submit"
+                            class="survey-skip-btn"
+                            aria-label="설문 건너뛰기"
+                            formaction="{% url 'survey:survey_skip' %}"
+                            formnovalidate
+                        >
+                            건너뛰기
+                        </button>
+                        <button type="submit" class="survey-submit">
+                            완료
+                            <span aria-hidden="true">›</span>
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

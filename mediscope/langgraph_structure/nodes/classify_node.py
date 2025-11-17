@@ -15,6 +15,9 @@ def classify_node(state: GraphState) -> GraphState:
             아래는 사용자의 기본 정보입니다:
             {survey_result}
 
+            이전 대화 요약(있다면 참고용):
+            {summary}
+
             이 정보를 참고하여 사용자 질문이 다음 세 가지 중 어디에 속하는지 판단하세요.
 
             1. 이 질문이 무관 질문(비의료/일반 대화)이면  
@@ -40,6 +43,12 @@ def classify_node(state: GraphState) -> GraphState:
 
             ---
 
+            추가 지침:
+            - 현재 질문이 모호하거나 병원 추천 여부만 묻더라도, 이전 대화 요약과 사용자 설문 정보를 활용해 가장 타당한 서비스 유형과 진료과를 정하세요.
+            - 이전 요약에 최근 증상이나 진료과가 있다면 그대로 이어서 판단합니다.
+
+            ---
+
             ## 출력 형식(JSON)
             {{
                 "service": "irrelevant" or "symptom" or "hospital",
@@ -59,6 +68,7 @@ def classify_node(state: GraphState) -> GraphState:
     response = chain.invoke({
         'question': state.get('question'),
         'survey_result': state.get('survey_result'),
+        'summary': state.get('summary', ""),
     })
 
     result = json.loads(response.content)

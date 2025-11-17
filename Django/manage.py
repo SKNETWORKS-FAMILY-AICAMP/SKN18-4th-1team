@@ -16,7 +16,7 @@ def main():
     sys.path.append(str(parent_path))
     
     # 2. Feature_rag 폴더 내부 추가 (langgraph_structure를 찾기 위함) << 이 부분 추가됨!
-    sys.path.append(str(parent_path / 'Feature_rag'))
+    sys.path.append(str(parent_path / 'mediscope'))
     # ▲▲▲ [수정 끝] ▲▲▲
 
     try:

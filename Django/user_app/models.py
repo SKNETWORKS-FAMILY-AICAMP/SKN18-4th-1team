@@ -40,6 +40,7 @@ class ChatSession(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        db_table = 'chat_session'
         ordering = ["-created_at"]
         verbose_name = "대화 세션"
         verbose_name_plural = "대화 세션"
@@ -54,7 +55,7 @@ class ChatMessage(models.Model):
     class Role(models.TextChoices):
         USER = "user", "사용자"
         ASSISTANT = "assistant", "어시스턴트"
-        SYSTEM = "system", "시스템"
+        SYSTEM = "system", "상담 요약"
 
     session = models.ForeignKey(
         ChatSession,
@@ -66,6 +67,7 @@ class ChatMessage(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        db_table = 'chat_message'
         ordering = ["created_at"]
         verbose_name = "대화 메시지"
         verbose_name_plural = "대화 메시지"

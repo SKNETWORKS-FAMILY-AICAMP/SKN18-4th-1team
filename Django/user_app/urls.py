@@ -14,4 +14,6 @@ urlpatterns = [
     path('profile/', views.mypage_view, name='account_profile'),
     # 프로필 수정 URL
     path('profile/edit/', views.profile_edit_view, name='profile_edit'),
+    # 상담 세션 삭제
+    path('chat-sessions/<int:pk>/delete/', views.delete_chat_session, name='chat_session_delete'),
 ] 

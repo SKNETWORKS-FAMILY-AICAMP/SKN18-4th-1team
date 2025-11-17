@@ -171,9 +171,15 @@
         <div id="loadingIndicator" class="typing-indicator">
             AI가 답변을 작성 중입니다...
         </div>
+        {% if error %}
+        <div class="message-row message-ai">
+            <div class="ai-icon">⚠️</div>
+            <div class="message-bubble" style="color:#b3261e;">{{ error }}</div>
+        </div>
+        {% endif %}
     </div>
 
-    <form method="POST" action="{% url 'medical_app:index' %}" class="chat-input-area" onsubmit="showLoading()">
+    <form method="POST" action="{% url 'medical_app:index' %}" class="chat-input-area" onsubmit="return showLoading()">
         {% csrf_token %}
         <div class="input-wrapper">
             <input 
@@ -203,11 +209,30 @@
     }
 
     // 폼 제출 시 로딩 표시
+    function appendUserBubble(text) {
+        if (!text) return;
+        const container = document.getElementById('chatContainer');
+        const row = document.createElement('div');
+        row.className = 'message-row message-user';
+        const bubble = document.createElement('div');
+        bubble.className = 'message-bubble';
+        bubble.textContent = text;
+        row.appendChild(bubble);
+        container.appendChild(row);
+        scrollToBottom();
+    }
+
     function showLoading() {
+        const input = document.querySelector('input[name="symptoms"]');
+        const text = input ? input.value.trim() : '';
+        if (!text) {
+            return false;
+        }
+        appendUserBubble(text);
         document.getElementById('loadingIndicator').style.display = 'block';
         scrollToBottom();
-        // 약간의 지연 후 스크롤 다시 내림 (화면 밀림 방지)
         setTimeout(scrollToBottom, 100);
+        return true;
     }
 
     // 시작할 때 실행

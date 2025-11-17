@@ -1,38 +1,65 @@
 """
 증상 분석 서비스 로직
 """
-# ▼▼▼ [중요] 에러가 나는 RAG 관련 임포트를 모두 주석 처리합니다 ▼▼▼
-# from Feature_rag.langgraph_structure.graph import create_graph_flow
-# langgraph_app = create_graph_flow()
+from typing import Optional
+import logging
+from mediscope.langgraph_structure.graph import create_graph_flow
+from mediscope.langgraph_structure.nodes.memory_node import (
+    memory_update_node as run_memory_update_node,
+)
 
-def analyze_symptoms(symptoms_text):
-    """
-    API 키가 없을 때를 대비한 '테스트 모드' 함수입니다.
-    실제 LangGraph를 호출하지 않고, 고정된 텍스트 답변을 반환합니다.
-    """
-    
-    # 1. (주석 처리) 실제 LangGraph 호출 부분
-    # input_data = {"question": symptoms_text}
-    # response_state = langgraph_app.invoke(input_data)
-    # final_answer_text = response_state.get("final_answer", "죄송합니다...")
-    # return final_answer_text
+DEFAULT_FALLBACK_MESSAGE = (
+    "죄송합니다. 답변을 생성하지 못했습니다. 증상을 조금 더 자세히 알려주시면 도와드릴 수 있어요."
+)
 
-    # 2. [추가] 가짜 답변 반환 (화면 테스트용)
-    dummy_response = f"""
-    [테스트 모드 동작 중]
-    
-    사용자님의 증상: "{symptoms_text}"
-    
-    현재 OpenAI API 키가 없어서 AI가 실제로 분석할 수는 없지만,
-    Django 서버와 프론트엔드 연결은 완벽하게 작동하고 있습니다!
-    
-    이 메시지가 보인다면:
-    1. views.py 연결 성공
-    2. services.py 호출 성공
-    3. index.html 결과 표시 성공
-    
-    모든 배관 작업이 완료되었습니다. 
-    나중에 API 키만 생기면 주석만 풀어서 바로 연결할 수 있습니다.
+logger = logging.getLogger(__name__)
+langgraph_app = create_graph_flow()
+
+
+def analyze_symptoms(
+    symptoms_text,
+    *,
+    memory_summary: Optional[str] = None,
+    region: Optional[str] = None,
+    survey_summary: Optional[str] = None,
+) -> dict:
     """
-    
-    return dummy_response.strip()
+    LangGraph에 질문을 전달하고, 생성된 상태를 반환합니다.
+    memory_summary가 주어지면 그래프 초기 상태에 그대로 전달합니다.
+    """
+
+    input_data = {"question": symptoms_text}
+    if memory_summary:
+        input_data["summary"] = memory_summary
+    if region:
+        input_data["region"] = region
+    if survey_summary:
+        input_data["survey_result"] = survey_summary
+
+    response_state = langgraph_app.invoke(input_data)
+
+    final_answer_text = response_state.get("final_answer")
+    if not final_answer_text:
+        final_answer_text = DEFAULT_FALLBACK_MESSAGE
+        response_state["final_answer"] = final_answer_text
+
+    summary_seed = response_state.get("summary") or memory_summary or ""
+    should_generate_summary = final_answer_text != DEFAULT_FALLBACK_MESSAGE
+    if should_generate_summary:
+        # 항상 메모리를 새로 갱신하여 Django 측에서도 요약을 확보한다.
+        try:
+            updated_state = run_memory_update_node(
+                {
+                    "summary": summary_seed,
+                    "question": symptoms_text,
+                    "final_answer": final_answer_text,
+                }
+            )
+            new_summary = updated_state.get("summary")
+            if new_summary:
+                response_state["summary"] = new_summary
+                logger.info("[chat] summary refreshed (len=%s)", len(new_summary))
+        except Exception as exc:
+            logger.warning("[chat] summary generation failed: %s", exc)
+
+    return response_state

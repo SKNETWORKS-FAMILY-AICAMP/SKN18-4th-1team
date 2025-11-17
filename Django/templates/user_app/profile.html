@@ -166,6 +166,14 @@
                                 </div>
                                 <div class="history-top-actions">
                                     <span class="pill-badge subtle">세션 {{ forloop.counter }}</span>
+                                    <form
+                                        method="POST"
+                                        action="{% url 'accounts:chat_session_delete' session.id %}"
+                                        onsubmit="return confirm('해당 상담 이력을 삭제할까요?');"
+                                    >
+                                        {% csrf_token %}
+                                        <button type="submit" class="pill-btn danger small">삭제</button>
+                                    </form>
                                     <button
                                         type="button"
                                         class="history-card-toggle"

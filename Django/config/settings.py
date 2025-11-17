@@ -135,3 +135,19 @@ AUTHENTICATION_BACKENDS = [
 LOGIN_REDIRECT_URL = 'medical_app:home'
 LOGOUT_REDIRECT_URL = 'medical_app:home'
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'medical_app': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+    },
+}
+

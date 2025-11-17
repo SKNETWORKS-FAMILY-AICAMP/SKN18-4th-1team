@@ -7,6 +7,11 @@ import re
 ###############################################
 def parse_region(region: str):
     region_clean = re.sub(r"[\(\),]", " ", region).strip()
+    region_clean = region_clean.replace("서울시", "서울특별시")
+    region_clean = region_clean.replace("부산시", "부산광역시").replace("대구시", "대구광역시")
+    region_clean = region_clean.replace("인천시", "인천광역시").replace("광주시", "광주광역시")
+    region_clean = region_clean.replace("대전시", "대전광역시").replace("울산시", "울산광역시")
+    region_clean = region_clean.replace("세종시", "세종특별자치시")
 
     emd_paren = None
     if m := re.search(r"\((.*?)\)", region):
@@ -117,9 +122,18 @@ def calculate_score(grades, severity):
 # 병원 추천 search node
 ##############################################
 def search_hospital_node(state: GraphState) -> GraphState:
-    dept_list = state.get("final_department", [])
+    dept_list = normalize_dept(state.get("final_department", []))
     region = state.get("region")
-    severity = state.get("severity")
+    severity = state.get("severity") or "MID"
+
+    if not region:
+        message = "어느 지역에 사는지 말씀해주시면 근처 병원을 추천해 드릴게요."
+        return {
+            **state,
+            "need_region": True,
+            "hospital_recommend": [],
+            "final_answer": message,
+        }
 
     parsed = parse_region(region)
     search_conditions = build_search_conditions(parsed)
@@ -175,7 +189,7 @@ def search_hospital_node(state: GraphState) -> GraphState:
         care_score = calculate_score(info["care_grade_basis"], severity)
         dist_score = DIST_LEVEL_SCORE.get(info["level"], 20)
 
-        care_w, dist_w = SEVERITY_RATIO[severity]
+        care_w, dist_w = SEVERITY_RATIO.get(severity, SEVERITY_RATIO["MID"])
         final_score = care_score * care_w + dist_score * dist_w
 
 
