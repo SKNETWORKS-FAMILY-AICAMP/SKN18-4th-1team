@@ -138,12 +138,30 @@
     
     /* 로딩 애니메이션 (선택사항) */
     .typing-indicator { font-size: 0.8rem; color: #888; margin-left: 45px; margin-bottom: 5px; display: none; }
+    .history-reset-form {
+        margin-left: auto;
+    }
+    .history-reset-btn {
+        border: none;
+        border-radius: 999px;
+        padding: 8px 14px;
+        background: #fee2e2;
+        color: #b91c1c;
+        font-weight: 600;
+        cursor: pointer;
+    }
 </style>
 
 <div class="chat-layout">
     <div class="chat-header">
         <img src="{% static 'images/cross_logo.png' %}" alt="Logo" class="header-logo">
         <h2 class="header-title">AI 의료 상담</h2>
+        {% if request.user.is_authenticated %}
+        <form method="POST" action="{% url 'medical_app:delete_chat' %}" class="history-reset-form">
+            {% csrf_token %}
+            <button type="submit" class="history-reset-btn">상담 이력 삭제</button>
+        </form>
+        {% endif %}
     </div>
 
     <div id="chatContainer" class="chat-container">

@@ -62,5 +62,5 @@ class SurveyForm(forms.ModelForm):
         })
         self.fields['address'].widget.attrs.update({
             'class': 'survey-input',
-            'placeholder': '예: 서울시 강남구'
+            'placeholder': '예: 서울특별시 강남구'
         })

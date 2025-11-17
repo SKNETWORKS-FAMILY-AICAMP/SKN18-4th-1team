@@ -1,6 +1,8 @@
 import json
 import logging
-from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.views.decorators.http import require_POST
 from user_app.models import ChatMessage, ChatSession
 from survey.models import SurveyResponse
 from .services import analyze_symptoms
@@ -203,11 +205,13 @@ def index(request):
 
     # 2. 대화 기록 불러오기 (GET, POST 모두 실행)
     chat_history = request.session.get('chat_history', [])
+    active_session = _get_or_create_session_for_user(request, create=False)
 
     # 3. 템플릿으로 데이터 전달
     context = {
         'chat_history': chat_history,  # 이제 result 하나가 아니라 전체 기록을 보냅니다
         'error': error,
+        'active_session': active_session,
     }
     
     return render(request, 'medical_app/index.html', context)
@@ -216,6 +220,23 @@ def index(request):
 def home(request):
     """랜딩 페이지"""
     return render(request, 'medical_app/home.html')
+
+
+@login_required
+@require_POST
+def delete_active_chat(request):
+    chat_session = _get_or_create_session_for_user(request, create=False)
+    if chat_session and chat_session.user_id == request.user.id:
+        ChatMessage.objects.filter(session=chat_session).delete()
+        chat_session.delete()
+    request.session.pop('chat_history', None)
+    request.session.pop('chat_memory_summary', None)
+    request.session.pop('chat_region', None)
+    request.session.pop('chat_survey_summary', None)
+    request.session.pop('awaiting_region', None)
+    request.session.pop('pending_hospital_question', None)
+    request.session.modified = True
+    return redirect('medical_app:index')
 def _hydrate_summary_from_db(request):
     """
     세션에 요약이 없고 DB에 저장된 상담 요약이 있다면 불러와서 세션에 복원합니다.
