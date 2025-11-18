@@ -74,6 +74,9 @@ LangGraph 기반의 의료 정보 검색 및 병원 추천 시스템입니다. �
 ## 🏗️ 시스템 구조
 <img src="image/랭그래프.png" width="600">
 
+[영상 보기](https://youtu.be/HwoQTkMBWQA)
+
+
 ```
 ┌─────────────┐
 │ classify_node │ → 질문 분류 (증상/병원/무관)
