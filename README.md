@@ -2,7 +2,20 @@
 
 # 병원어때[의료 RAG 시스템 (Medical RAG System)]
 
-LangGraph 기반의 의료 정보 검색 및 병원 추천 시스템입니다. 사용자의 증상을 분석하고, 관련 의료 정보를 제공하며, 적절한 병원을 추천합니다.
+LangGraph 기반의 의료 정보 검색 및 병원 추천 시스템입니다. 사용자의 증상을 분석하고, 관련 의료 정보를 제공하며, 적절한 병원을 추천합니다.  
+
+## 팀원 소개
+
+| 이름 | GitHub |
+| --- | --- |
+| 황민우[팀장] | [@minwooHwang](https://github.com/minwooHwang) |
+| 손주영 | [@sonjuyeong-00](https://github.com/sonjuyeong-00) |
+| 박세영 | [@seyung000](https://github.com/seyung000) |
+| 장이건 | [@poolbbang](https://github.com/poolbbang)|
+| 조준호 | [@lemondear](https://github.com/lemondear) |
+| 김담하 | [@DamHA-Kim](https://github.com/DamHA-Kim) |
+
+<!-- 위 표의 각 행을 실제 팀원 정보로 바꿔주세요. 필요하면 열(역할/이메일 등)을 추가해도 됩니다. -->
 
 ## 📋 목차
 - [개요](#개요)
