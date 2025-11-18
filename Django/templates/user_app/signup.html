@@ -1,0 +1,80 @@
+{% extends "layout/base.html" %}
+{% load static %}
+{% block title %}회원가입{% endblock %}
+{% block body_class %}login-body{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="auth-page signup-page">
+    <div class="auth-hero">
+        <div class="logo-img">
+            <img src="{% static 'images/cross_logo.png' %}" alt="AI 의료 상담 로고">
+        </div>
+        <div class="hero-text">
+            <p class="hero-title">AI 의료 상담 시스템</p>
+            <p class="hero-subtitle">맞춤형 상담을 위해 계정을 생성하세요</p>
+        </div>
+    </div>
+
+    <div class="auth-card">
+        <div class="card-head">
+            <p class="card-title">회원가입</p>
+            <p class="card-subtitle">필요한 정보를 입력한 뒤 가입을 완료하세요</p>
+        </div>
+
+        {% if form.errors %}
+        <div class="form-errors" role="alert">
+            {% for field in form.visible_fields %}
+                {% for error in field.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" class="auth-form" action="">
+            {% csrf_token %}
+            {% for field in form.hidden_fields %}
+                {{ field }}
+            {% endfor %}
+
+            {% for field in form.visible_fields %}
+            <div class="input-field{% if field.errors %} has-error{% endif %}">
+                <label class="field-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                <div class="field-box">
+                    {{ field }}
+                </div>
+                {% if field.help_text %}
+                <p class="field-help">{{ field.help_text|safe }}</p>
+                {% endif %}
+                {% if field.errors %}
+                    {% for error in field.errors %}
+                    <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="auth-btn">회원가입</button>
+        </form>
+    </div>
+
+    <p class="auth-switch">
+        이미 계정이 있으신가요?
+        {% if request.GET.next %}
+            <a class="nav-btn ghost" href="{% url 'accounts:login' %}?next={{ request.GET.next|urlencode }}">로그인</a>
+        {% else %}
+            <a class="nav-btn ghost" href="{% url 'accounts:login' %}">로그인</a>
+        {% endif %}
+    </p>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+{% endblock %}
