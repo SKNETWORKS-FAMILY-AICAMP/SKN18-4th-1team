@@ -1,3 +1,5 @@
+<img src="image/dr_edit.png" width="600">  
+
 # 병원어때[의료 RAG 시스템 (Medical RAG System)]
 
 LangGraph 기반의 의료 정보 검색 및 병원 추천 시스템입니다. 사용자의 증상을 분석하고, 관련 의료 정보를 제공하며, 적절한 병원을 추천합니다.
