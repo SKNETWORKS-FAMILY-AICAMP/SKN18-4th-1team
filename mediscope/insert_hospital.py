@@ -3,11 +3,11 @@ from dotenv import load_dotenv
 load_dotenv()
 import os
 from sqlalchemy import create_engine
-
+\
 
 engine = create_engine(os.getenv("CONNECTION_STRING"))
 #CSV 파일 읽기
-df = pd.read_csv(".\Data\hospital_full_info_with_department.csv")
+df = pd.read_csv("./Data/hospital_full_info_with_department.csv")
 
 #DB에 넣기 (테이블이 없으면 자동 생성)
 df.to_sql("hospital_table", engine, if_exists="append", index=False)
