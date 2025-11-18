@@ -1,0 +1,251 @@
+{% extends "layout/base.html" %}
+{% load static %}
+
+{% block title %}마이페이지{% endblock %}
+
+{% block content %}
+<section class="mypage-wrapper">
+    <div class="profile-card">
+        <div class="profile-head">
+                    <div class="profile-avatar">
+                        {{ user.name|default:user.username|first|upper }}
+                    </div>
+                    <div class="profile-summary">
+                        <p class="profile-label">내 정보</p>
+                        <p class="profile-name">
+                            {% if user.name %}
+                                {{ user.name }}
+                            {% elif user.last_name and user.first_name %}
+                                {{ user.last_name }}{{ user.first_name }}
+                            {% else %}
+                                {{ user.username|default:user.email }}
+                            {% endif %}
+                        </p>
+                        <p class="profile-email">{{ user.email }}</p>
+                    </div>
+                    <div class="profile-badges">
+                        <span class="pill-badge">일반 회원</span>
+                        <p class="profile-joined">가입 {{ user.date_joined|date:"Y.m.d" }}</p>
+                    </div>
+                </div>
+
+        <div class="profile-info-grid">
+    <!-- 이름 -->
+    <div class="info-item">
+        <span class="info-label">이름</span>
+        <span class="info-value">
+            {% if user.name %}
+                {{ user.name }}
+            {% elif user.last_name and user.first_name %}
+                {{ user.last_name }}{{ user.first_name }}
+            {% else %}
+                -
+            {% endif %}
+        </span>
+    </div>
+
+    <!-- 이메일 -->
+    <div class="info-item email-item">
+        <span class="info-label">이메일</span>
+        <span class="info-value">{{ user.email }}</span>
+    </div>
+
+    <!-- 주소 (전체 폭) -->
+    <div class="info-item info-item-wide">
+        <span class="info-label">주소</span>
+        <span class="info-value">
+            {% if survey and survey.address %}
+                {{ survey.address }}
+            {% else %}
+                -
+            {% endif %}
+        </span>
+    </div>
+
+    <!-- 키 -->
+    <div class="info-item">
+        <span class="info-label">키</span>
+        <span class="info-value">
+            {% if survey and survey.height_cm %}
+                {{ survey.height_cm }} cm
+            {% else %}
+                -
+            {% endif %}
+        </span>
+    </div>
+
+    <!-- 몸무게 -->
+    <div class="info-item">
+        <span class="info-label">몸무게</span>
+        <span class="info-value">
+            {% if survey and survey.weight_kg %}
+                {{ survey.weight_kg }} kg
+            {% else %}
+                -
+            {% endif %}
+        </span>
+    </div>
+
+    <!-- BMI -->
+    <div class="info-item">
+        <span class="info-label">BMI</span>
+        <span class="info-value">
+            {% if survey and survey.bmi %}
+                {{ survey.bmi }} ({{ survey.get_bmi_category_display }})
+            {% else %}
+                -
+            {% endif %}
+        </span>
+    </div>
+
+    <!-- 임신 여부 -->
+                    <div class="info-item">
+                        <span class="info-label">임신 여부</span>
+                        <span class="info-value">
+                            {% if survey and survey.pregnancy == True %}
+                                예
+                            {% elif survey and survey.pregnancy == False %}
+                                아니오
+                            {% else %}
+                                미입력
+                            {% endif %}
+                        </span>
+                    </div>
+
+    <!-- 지병 (전체 폭) -->
+    <div class="info-item info-item-wide">
+        <span class="info-label">지병</span>
+        <span class="info-value multiline">
+            {% if survey and survey.preexisting_conditions %}
+                {{ survey.preexisting_conditions|linebreaksbr }}
+            {% else %}
+                -
+            {% endif %}
+        </span>
+    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">최근 상담</span>
+                        <span class="info-value">
+                            {% if chat_sessions %}
+                                {{ chat_sessions.0.created_at|date:"Y.m.d H:i" }}
+                            {% else %}
+                                상담 이력 없음
+                            {% endif %}
+                        </span>
+                    </div>
+        </div>
+
+        <div class="profile-actions">
+            <a href="{% url 'medical_app:index' %}" class="pill-btn ghost">홈으로</a>
+            <a href="{% url 'accounts:profile_edit' %}" class="pill-btn primary">프로필 수정</a>
+            <button type="button" class="pill-btn danger" id="logout-btn">로그아웃</button>
+        </div>
+    </div>
+
+    <div class="history-section">
+        <div class="section-header">
+            <div>
+                <p class="section-label">상담 기록</p>
+                <h2>최근 상담 요약</h2>
+            </div>
+            <span class="section-count">{{ chat_sessions|length }}건</span>
+        </div>
+
+        <div class="history-content">
+            {% if chat_sessions %}
+                <div class="history-list">
+                    {% for session in chat_sessions %}
+                        <article class="history-card" id="session-{{ session.id }}">
+                            <header class="history-top">
+                                <div>
+                                    <p class="history-date">{{ session.created_at|date:"Y.m.d H:i" }}</p>
+                                    {% if session.updated_at %}
+                                        <p class="history-updated">업데이트 {{ session.updated_at|date:"m.d H:i" }}</p>
+                                    {% endif %}
+                                </div>
+                                <div class="history-top-actions">
+                                    <span class="pill-badge subtle">세션 {{ forloop.counter }}</span>
+                                    <form
+                                        method="POST"
+                                        action="{% url 'accounts:chat_session_delete' session.id %}"
+                                        onsubmit="return confirm('해당 상담 이력을 삭제할까요?');"
+                                    >
+                                        {% csrf_token %}
+                                        <button type="submit" class="pill-btn danger small">삭제</button>
+                                    </form>
+                                    <button
+                                        type="button"
+                                        class="history-card-toggle"
+                                        data-target="session-{{ session.id }}"
+                                        aria-expanded="true"
+                                    >
+                                        <span class="toggle-label">접기</span>
+                                        <span class="history-toggle-icon">⌃</span>
+                                    </button>
+                                </div>
+                            </header>
+                            <div class="history-messages">
+                                {% for message in session.messages.all %}
+                                    <div class="history-message history-message-{{ message.role }}">
+                                        <div class="history-message-meta">
+                                            <span class="history-role">{{ message.get_role_display }}</span>
+                                            <span class="history-time">{{ message.created_at|date:"H:i" }}</span>
+                                        </div>
+                                        <p>{{ message.content|linebreaksbr }}</p>
+                                    </div>
+                                {% empty %}
+                                    <p class="history-empty">메시지가 없습니다.</p>
+                                {% endfor %}
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="history-empty-card">
+                    <p>아직 저장된 상담 기록이 없습니다.</p>
+                    <a href="{% url 'medical_app:index' %}" class="pill-btn primary">첫 상담 시작하기</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<form id="logout-form" action="{% url 'accounts:logout' %}" method="POST" style="display: none;">
+    {% csrf_token %}
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(event) {
+            // a 태그의 기본 동작(페이지 이동)을 막습니다.
+            event.preventDefault(); 
+            
+            // 사용자에게 확인을 받습니다.
+            if (confirm('로그아웃 하시겠습니까?')) {
+                // '확인'을 누르면 숨겨진 폼을 전송하여 안전하게 로그아웃합니다.
+                document.getElementById('logout-form').submit();
+            }
+        });
+    }
+
+    document.querySelectorAll('.history-card-toggle').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const targetId = button.getAttribute('data-target');
+            const card = document.getElementById(targetId);
+            if (!card) return;
+            const collapsed = card.classList.toggle('collapsed');
+            button.setAttribute('aria-expanded', (!collapsed).toString());
+            const label = button.querySelector('.toggle-label');
+            if (label) {
+                label.textContent = collapsed ? '펼치기' : '접기';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

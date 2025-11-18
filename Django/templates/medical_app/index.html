@@ -1,0 +1,260 @@
+{% extends "layout/base.html" %}
+{% load static %}
+
+{% block title %}AI 의료 상담{% endblock %}
+
+{% block content %}
+<style>
+    /* 기본 스크롤 허용 */
+    body, html {
+        min-height: 100%;
+        margin: 0;
+    }
+
+    .chat-layout {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: #f5f7fb;
+        padding-bottom: 2rem;
+    }
+
+    /* 1. 헤더 영역 */
+    .chat-header {
+        flex-shrink: 0; /* 크기 줄어들지 않음 */
+        padding: 15px 20px;
+        background: white;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        z-index: 10;
+    }
+    .header-logo { width: 30px; height: 30px; object-fit: contain; }
+    .header-title { font-size: 1.2rem; font-weight: bold; color: #333; margin: 0; }
+
+    /* 2. 채팅 내용 영역 (스크롤) */
+    .chat-container {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* 말풍선 공통 스타일 */
+    .message-row {
+        display: flex;
+        align-items: flex-start;
+        max-width: 80%;
+    }
+    .message-bubble {
+        padding: 12px 16px;
+        border-radius: 15px;
+        font-size: 1rem;
+        line-height: 1.6;
+        white-space: pre-wrap; /* 줄바꿈 반영 */
+        word-break: break-word;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    /* (A) AI 메시지 (왼쪽) */
+    .message-ai {
+        align-self: flex-start;
+    }
+    .ai-icon {
+        font-size: 1.5rem;
+        margin-right: 10px;
+        margin-top: 5px;
+    }
+    .message-ai .message-bubble {
+        background-color: white;
+        color: #333;
+        border-top-left-radius: 2px;
+    }
+
+    /* (B) 사용자 메시지 (오른쪽) */
+    .message-user {
+        align-self: flex-end; /* 오른쪽 정렬 */
+        flex-direction: row-reverse; /* 아이콘이 있다면 반대로 */
+    }
+    .message-user .message-bubble {
+        background-color: #4A90E2; /* 파란색 */
+        color: white;
+        border-top-right-radius: 2px;
+    }
+
+    /* 3. 하단 입력창 (고정) */
+    .chat-input-area {
+        background: white;
+        padding: 15px 20px;
+        border-top: 1px solid #e0e0e0;
+        display: flex;
+        gap: 10px;
+        align-items: flex-end;
+        position: sticky;
+        bottom: 0;
+    }
+    
+    .input-wrapper {
+        position: relative;
+        flex-grow: 1;
+    }
+
+    .chat-input {
+        width: 100%;
+        padding: 12px 15px;
+        padding-right: 40px; /* 버튼 공간 */
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        resize: none; /* 크기 조절 불가 */
+        height: 50px; /* 기본 높이 */
+        max-height: 120px;
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    .chat-input:focus {
+        border-color: #4A90E2;
+    }
+
+    .send-btn {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: #4A90E2;
+        color: white;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+        flex-shrink: 0;
+    }
+    .send-btn:hover { background: #357ABD; }
+    
+    /* 로딩 애니메이션 (선택사항) */
+    .typing-indicator { font-size: 0.8rem; color: #888; margin-left: 45px; margin-bottom: 5px; display: none; }
+    .history-reset-form {
+        margin-left: auto;
+    }
+    .history-reset-btn {
+        border: none;
+        border-radius: 999px;
+        padding: 8px 14px;
+        background: #fee2e2;
+        color: #b91c1c;
+        font-weight: 600;
+        cursor: pointer;
+    }
+</style>
+
+<div class="chat-layout">
+    <div class="chat-header">
+        <img src="{% static 'images/cross_logo.png' %}" alt="Logo" class="header-logo">
+        <h2 class="header-title">AI 의료 상담</h2>
+        {% if request.user.is_authenticated %}
+        <form method="POST" action="{% url 'medical_app:delete_chat' %}" class="history-reset-form">
+            {% csrf_token %}
+            <button type="submit" class="history-reset-btn">상담 이력 삭제</button>
+        </form>
+        {% endif %}
+    </div>
+
+    <div id="chatContainer" class="chat-container">
+        <div class="message-row message-ai">
+            <div class="ai-icon">🤖</div>
+            <div class="message-bubble">
+                안녕하세요! AI 의료 어시스턴트입니다.<br>
+                증상을 말씀해 주시면 예상 질병과 병원을 안내해 드립니다.
+            </div>
+        </div>
+
+        {% for msg in chat_history %}
+            {% if msg.role == 'user' %}
+                <div class="message-row message-user">
+                    <div class="message-bubble">{{ msg.content }}</div>
+                </div>
+            {% else %}
+                <div class="message-row message-ai">
+                    <div class="ai-icon">🤖</div>
+                    <div class="message-bubble">{{ msg.content|linebreaksbr }}</div>
+                </div>
+            {% endif %}
+        {% endfor %}
+        
+        <div id="loadingIndicator" class="typing-indicator">
+            AI가 답변을 작성 중입니다...
+        </div>
+        {% if error %}
+        <div class="message-row message-ai">
+            <div class="ai-icon">⚠️</div>
+            <div class="message-bubble" style="color:#b3261e;">{{ error }}</div>
+        </div>
+        {% endif %}
+    </div>
+
+    <form method="POST" action="{% url 'medical_app:index' %}" class="chat-input-area" onsubmit="return showLoading()">
+        {% csrf_token %}
+        <div class="input-wrapper">
+            <input 
+                type="text" 
+                name="symptoms" 
+                class="chat-input" 
+                placeholder="증상을 입력하세요..." 
+                required 
+                autocomplete="off"
+                autofocus
+            >
+        </div>
+        <button type="submit" class="send-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+        </button>
+    </form>
+</div>
+
+<script>
+    // 페이지 로드 시 스크롤 맨 아래로 이동
+    function scrollToBottom() {
+        const container = document.getElementById('chatContainer');
+        container.scrollTop = container.scrollHeight;
+    }
+
+    // 폼 제출 시 로딩 표시
+    function appendUserBubble(text) {
+        if (!text) return;
+        const container = document.getElementById('chatContainer');
+        const row = document.createElement('div');
+        row.className = 'message-row message-user';
+        const bubble = document.createElement('div');
+        bubble.className = 'message-bubble';
+        bubble.textContent = text;
+        row.appendChild(bubble);
+        container.appendChild(row);
+        scrollToBottom();
+    }
+
+    function showLoading() {
+        const input = document.querySelector('input[name="symptoms"]');
+        const text = input ? input.value.trim() : '';
+        if (!text) {
+            return false;
+        }
+        appendUserBubble(text);
+        document.getElementById('loadingIndicator').style.display = 'block';
+        scrollToBottom();
+        setTimeout(scrollToBottom, 100);
+        return true;
+    }
+
+    // 시작할 때 실행
+    window.onload = scrollToBottom;
+</script>
+
+{% endblock %}

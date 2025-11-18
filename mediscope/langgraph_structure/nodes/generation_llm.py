@@ -1,0 +1,130 @@
+from langgraph_structure.init_state import GraphState
+from langchain_core.prompts import PromptTemplate
+from langgraph_structure.utils import model
+
+def generation_llm_node(state: GraphState) -> GraphState:
+    summary = state.get("summary", "")
+    service = state.get("service")
+    question = state.get("question")
+    relevant_source = state.get("relevant_source", [])
+    llm = model("gpt-5-nano")
+    if service == "symptom":
+        chain = __symptom_template() | llm
+        result = chain.invoke({
+        "question": question,
+        "relevant_contents": state.get('relevant_contents'),
+        "relevant_source": relevant_source,
+        "summary": summary,
+        'survey_result':state.get('survey_result')
+        })
+        
+    else:
+        chain =__hospital_template() | llm
+        result = chain.invoke({
+        "question": question,
+        "most_likely_disease": state.get("most_likely_disease", ""),
+        "severity": state.get("severity", ""),
+        "final_department":state.get("final_department", ""),
+        "hospital_recommend": state.get("hospital_recommend"),
+        "relevant_source": relevant_source,
+        "summary": summary
+        })
+
+
+    return {
+        **state,
+        "final_answer": result.content
+    }
+    
+    
+def __symptom_template() :
+    template = """
+    당신은 안전하고 정확한 정보를 제공하는 의료 어시스턴트입니다.
+
+        [질문]
+        {question}
+
+        [사용자 정보]
+        {survey_result}
+
+        [참고 문서]
+        {relevant_contents}
+
+        [출처]
+        {relevant_source}
+
+        --------------------------------------
+        ## 답변 규칙
+
+        1) 질문이 **의학 용어·개념 설명**이면:
+        - 의미 설명
+        - 기능 또는 역할
+        - 관련된 질환/주의점(선택)
+        - 진단/위험 신호 언급 금지
+
+        2) 질문이 **증상·통증 묘사**이면:
+        - 증상 요약
+        - 가능한 원인(가능성 표현만)
+        - 위험 신호 여부(응급 상황만)
+        - 도움이 되는 관리 방법
+        - 필요한 진료과
+
+        3) 단정 표현 금지 (“~입니다” X → “~일 수 있습니다”)
+
+        4) 전문 용어는 간단히 풀어서 설명, 의학용어를 모르는 일반인에게 설명하듯이 설명.
+
+        5) 마지막에 참고된 문서 출처 표시 및 안내 문자 작성:
+            - 너에게 보내준 출처만을 표시 
+            - 안내 문구: 정확한 진단은 의료진의 진료를 통해 가능합니다.
+    """
+    return PromptTemplate.from_template(template)
+
+def __hospital_template():
+    template ="""
+            당신은 '증상 기반 병원 추천 전문 어시스턴트'입니다.
+            아래 정보는 이미 전문 알고리즘을 통해 판단된 사용자 상태이며,
+            당신은 이 정보를 기반으로 추천된 병원을 사용자에게 이해하기 쉽게 설명해야 합니다.
+        
+            --------------------------------------
+            [대화 요약 Memory]
+            {summary}
+            
+            [사용자 질문]
+            {question}
+
+            [사용자 증상 분석 결과]
+            - 의심 질환: {most_likely_disease}
+            - 중증도: {severity}
+            - 관련 진료과: {final_department}
+
+            [추천된 병원 리스트 (점수 높은 순)]
+            {hospital_recommend}
+            
+            [참고된 문서 출처]
+            {relevant_source}
+            --------------------------------------
+
+            ## 작성 규칙
+            1. ** 병원 설명 **
+                - 왜 적합한지
+                - 진료과와의 연결성
+                - 실제 데이터에 존재하는 근거만 사용 (간호등급, 장비, 의료진 등)
+
+            2. 간호등급은 의미 기반으로 변환하여 설명:
+                예: "간호 인력이 충분하여 환자 케어가 빠릅니다."
+
+            3. 새로운 의학적 판단을 하지 말 것
+            - 이미 나온 {most_likely_disease}, {severity}, {final_department}만 사용
+            
+            4. 의학용어는 의학용어를 모르는 사람도 이해하기 쉽도록 풀어서 설명.
+            4. 마지막에 친절한 의료 안내 문구 포함
+            예: "정확한 진단은 의료진의 진료를 통해 확인할 수 있습니다."
+
+            ## 출력 형식
+
+            - 추천 병원 1~2개 + 추천 이유
+            - 진료과 적합성 설명
+            - 참고된 문서 출처 표시
+            - 마무리 안내 문구
+    """
+    return PromptTemplate.from_template(template)
