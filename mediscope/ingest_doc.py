@@ -8,7 +8,7 @@ def main():
     
     VectorIngest(
         embedding_fn = set_embedding_model(),
-        file_path = ".\Data\merged_with_domain_final.csv",
+        file_path = "./Data/merged_with_domain_final.csv",
         content_column = "content",
         metadata_columns = ["domain", "source_spec"]
     )()

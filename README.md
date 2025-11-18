@@ -1,9 +1,11 @@
-# 의료 RAG 시스템 (Medical RAG System)
+# 병원어때[의료 RAG 시스템 (Medical RAG System)]
 
 LangGraph 기반의 의료 정보 검색 및 병원 추천 시스템입니다. 사용자의 증상을 분석하고, 관련 의료 정보를 제공하며, 적절한 병원을 추천합니다.
 
 ## 📋 목차
-
+- [개요](#개요)
+- [시장성](#시장성)
+- [시스템 구조](#시스템-구조)
 - [주요 기능](#주요-기능)
 - [시스템 구조](#시스템-구조)
 - [설치 방법](#설치-방법)
@@ -12,7 +14,32 @@ LangGraph 기반의 의료 정보 검색 및 병원 추천 시스템입니다. �
 - [LangSmith를 사용한 테스트 및 모니터링](#-langsmith를-사용한-테스트-및-모니터링)
 - [프로젝트 구조](#프로젝트-구조)
 - [기술 스택](#기술-스택)
-- [병원 추천 알고리즘](#-병원-추천-알고리즘)
+- [병원 추천 알고리즘](#-병원-추천-알고리즘)  
+
+## 개요  
+우리가 어떠한 물건을 산다고 생각해봅시다. 같은 물건이라도 최저가에 배송비가 붙지 않는 곳에서 구매하기 위해 소비자들은 시간을 들여  
+검색하고 찾아본 뒤에 본인이 찾은 정보 내에서 가장 합리적이라고 생각되는 곳에서 물건을 구매합니다.  
+
+그런데 병원은 어떨까요? 생각보다 병원을 고르는 행위는 합리적인 선택과는 거리가 멀 수도 있다는 생각이 들었습니다. 당장 내가 아프니까, 혹은 어느 병원이 정말 좋은 병원인지 판단할 만 정보가 너무 부족하기 때문에 눈 앞에 당장 보이는 병원 혹은, 네이버 지도나 카카오지도에 검색해 나오는 가장 가까운 병원 중 하나를 선택해서 가는 경우가 대부분일 것 입니다.
+
+저희는 바로 이 점에서 의문이 들었습니다. 왜 병원은 우리가 물건 사듯 재고 따지기가 어려운가? 굳이 이유를 찾자면 병원은 일반 상품과는 다르게 전문화된 상품이라는 것과 그것을 판별할만한 여유나 정보가 부족하기 때문일 것이고 저와 저희 팀은 바로 이 점을 해결해줄 수 있는 제품을 만들어보고자 했습니다.
+<img src="image/논문1.png" width="1000">
+<img src="image/논문2.png" width="1000">   
+
+## 시장성
+<img src="image/2023~2030년_한국_AI_헬스케어_시장_성장_추정.png" width="1000">  
+2023~2030년 한국 AI 헬스케어 시장 성장 추이  
+2023년: 3억 7,700만 달러 / 2030년: 66억 7,200만 달러(연평균 성장률 50.8%)  
+
+- AI 헬스케어 및 의료 챗봇, 지능형 의료 내비게이션 시장은 연평균 20% 이상의 높은 성장세  
+
+- 한국 내에서도 병원 예약, 의료 기관 검색, 증상 기반 진단 등 다양한 디지털 헬스케어 솔루션이 활발하게 도입, 상용화되고 있음  
+
+- ZnanyLekarz(폴란드): 전국의 병원·의사 정보를 종합 제공, 후기 및 평점 기반으로 환자가 병원 선택  
+
+- Babylon Health(영국): AI 챗봇 활용, 증상 분석과 전문가 매칭을 자동화해 효율과 신뢰성을 크게 향상  
+
+**이를 통해 환자 증상 기반 맞춤 병원 추천 서비스에 대한 시장성은 충분히 확보되어있다는 것을 알 수 있습니다.**
 
 ## 🎯 주요 기능
 
@@ -245,36 +272,96 @@ LANGCHAIN_TRACING_V2=false
 
 ```
 SKN18-4th-1team/
-├── mediscope/                    # 메인 프로젝트 디렉토리
-│   ├── langgraph_structure/      # LangGraph 구조
-│   │   ├── graph.py              # 그래프 정의
-│   │   ├── init_state.py         # 상태 정의
-│   │   ├── utils.py              # 유틸리티 함수
-│   │   ├── nodes/                # 노드 모듈
-│   │   │   ├── classify_node.py      # 질문 분류
-│   │   │   ├── rewrite_question.py   # 질문 재작성
-│   │   │   ├── search_node.py        # 벡터 검색
-│   │   │   ├── eval_node.py          # 관련성 평가
-│   │   │   ├── judgment_symtom.py    # 증상 판단
-│   │   │   ├── search_hospital.py    # 병원 검색
-│   │   │   ├── generation_llm.py     # 답변 생성
-│   │   │   ├── memory_node.py        # 메모리 업데이트
-│   │   │   └── web_search.py         # 웹 검색
-│   │   └── Rag/                  # RAG 관련 모듈
-│   │       ├── custom_pgvector.py
-│   │       ├── custom_ingest.py
-│   │       └── custom_loader.py
-│   ├── ingest_doc.py             # 문서 임베딩 스크립트
-│   └── langgraph.json            # LangGraph 설정
-├── Docker_medical/               # Docker 설정
-│   ├── docker-compose.yml
-│   └── init.sql                  # DB 초기화 스크립트
-├── Data/                         # 데이터 파일
-│   ├── merged_with_domain.csv    # 의료 문서 데이터
-│   └── hospital_full_info_with_department.csv
-├── main.py                       # 메인 진입점
-├── requirements.txt              # Python 패키지 목록
-└── README.md                     # 이 파일
+├── main.py                                       # 메인 진입점
+├── requirements.txt                              # Python 패키지 목록
+├── README.md                                     # 프로젝트 문서
+│
+├── Data/                                         # 데이터 파일
+│   ├── hospital_full_info_with_department.csv    # 병원 정보 데이터
+│   └── merged_with_domain_final.csv              # 의료 문서 데이터
+│
+├── Django/                                       # Django 웹 애플리케이션
+│   ├── manage.py                                 # Django 관리 스크립트
+│   ├── README.md                                 # Django 프로젝트 문서
+│   │
+│   ├── config/                                   # Django 설정
+│   │   ├── __init__.py
+│   │   ├── settings.py                           # 프로젝트 설정
+│   │   ├── urls.py                               # URL 라우팅
+│   │   ├── wsgi.py                               # WSGI 설정
+│   │   └── asgi.py                               # ASGI 설정
+│   │
+│   ├── medical_app/                              # 의료 정보 앱
+│   │   ├── __init__.py
+│   │   ├── admin.py                              # 관리자 페이지
+│   │   ├── apps.py                               # 앱 설정
+│   │   ├── models.py                             # 데이터 모델
+│   │   ├── views.py                              # 뷰 로직
+│   │   ├── urls.py                               # URL 라우팅
+│   │   └── services.py                           # 비즈니스 로직
+│   │
+│   ├── survey/                                   # 설문 조사 앱
+│   │   ├── forms.py                              # 폼 정의
+│   │   ├── models.py                             # 데이터 모델
+│   │   ├── views.py                              # 뷰 로직
+│   │   ├── urls.py                               # URL 라우팅
+│   │   ├── services.py                           # 비즈니스 로직
+│   │   └── migrations/                           # DB 마이그레이션
+│   │
+│   ├── user_app/                                 # 사용자 관리 앱
+│   │   ├── __init__.py
+│   │   ├── admin.py                              # 관리자 페이지
+│   │   ├── apps.py                               # 앱 설정
+│   │   ├── models.py                             # 사용자 모델
+│   │   ├── views.py                              # 뷰 로직
+│   │   ├── urls.py                               # URL 라우팅
+│   │   ├── forms.py                              # 폼 정의
+│   │   ├── signals.py                            # 시그널 처리
+│   │   └── migrations/                           # DB 마이그레이션
+│   │
+│   ├── static/                                   # 정적 파일
+│   │   ├── css/                                  # 스타일시트
+│   │   ├── js/                                   # JavaScript
+│   │   └── images/                               # 이미지
+│   │
+│   └── templates/                                # HTML 템플릿
+│       ├── layout/                               # 레이아웃 템플릿
+│       ├── medical_app/                          # 의료 정보 템플릿
+│       ├── survey/                               # 설문 조사 템플릿
+│       └── user_app/                             # 사용자 관리 템플릿
+│
+├── Docker_medical/                               # Docker 설정
+│   ├── docker-compose.yml                        # Docker Compose 설정
+│   ├── init.sql                                  # DB 초기화 스크립트
+│   └── database/                                 # PostgreSQL 데이터 디렉토리
+│
+└── mediscope/                                    # LangGraph RAG 시스템
+    ├── langgraph.json                            # LangGraph 설정
+    ├── pyproject.toml                            # 프로젝트 메타데이터
+    ├── ingest_doc.py                             # 문서 임베딩 스크립트
+    ├── insert_hospital.py                        # 병원 데이터 삽입 스크립트
+    │
+    └── langgraph_structure/                      # LangGraph 구조
+        ├── __init__.py
+        ├── graph.py                              # 그래프 정의
+        ├── init_state.py                         # 상태 정의
+        ├── utils.py                              # 유틸리티 함수
+        │
+        ├── nodes/                                # 노드 모듈
+        │   ├── classify_node.py                  # 질문 분류
+        │   ├── rewrite_question.py               # 질문 재작성
+        │   ├── search_node.py                    # 벡터 검색
+        │   ├── eval_node.py                      # 관련성 평가
+        │   ├── judgment_symtom.py                # 증상 판단
+        │   ├── search_hospital.py                # 병원 검색
+        │   ├── generation_llm.py                 # 답변 생성
+        │   ├── memory_node.py                    # 메모리 업데이트
+        │   └── web_search.py                     # 웹 검색
+        │
+        └── Rag/                                  # RAG 관련 모듈
+            ├── custom_pgvector.py                # 커스텀 pgvector 구현
+            ├── custom_ingest.py                  # 문서 임베딩 로직
+            └── custom_loader.py                  # 문서 로더
 ```
 
 ## 🛠️ 기술 스택
