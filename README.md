@@ -8,6 +8,7 @@ LangGraph 기반의 의료 정보 검색 및 병원 추천 시스템입니다. �
 - [개요](#개요)
 - [시장성](#시장성)
 - [시스템 구조](#시스템-구조)
+- [화면 설계서](#화면-설계서)
 - [주요 기능](#주요-기능)
 - [시스템 구조](#시스템-구조)
 - [설치 방법](#설치-방법)
@@ -43,6 +44,51 @@ LangGraph 기반의 의료 정보 검색 및 병원 추천 시스템입니다. �
 - Babylon Health(영국): AI 챗봇 활용, 증상 분석과 전문가 매칭을 자동화해 효율과 신뢰성을 크게 향상  
 
 **이를 통해 환자 증상 기반 맞춤 병원 추천 서비스에 대한 시장성은 충분히 확보되어있다는 것을 알 수 있습니다.**
+
+## 화면 설계서
+<table>
+<tr>
+<td style="text-align: center;">
+  <img src="image/건강 상태 설문.png" width="400"><br>
+  건강상태 설문
+</td>
+<td style="text-align: center;">
+  <img src="image/여성 건강설문.png" width="400"><br>
+  여성의 경우 건강 설문
+</td>
+</tr>
+<tr>
+<td style="text-align: center;">
+  <img src="image/마이페이지.png" width="400"><br>
+  마이 페이지
+</td>
+<td style="text-align: center;">
+  <img src="image/상담챗봇.png" width="400"><br>
+  상담쳇봇 화면
+</td>
+</tr>
+<tr>
+<td style="text-align: center;">
+  <img src="image/목아픔, 병원추천.png" width="400"><br>
+  목아픔에 대한 병원추천 답변
+</td>
+<td style="text-align: center;">
+  <img src="image/발목 통증.png" width="400"><br>
+  발목 통증에 대한 답변
+</td>
+</tr>
+<tr>
+<td style="text-align: center;">
+  <img src="image/임산부 결과.png" width="400"><br>
+  임산부의 경우 병원 추천
+</td>
+<td style="text-align: center;">
+  <img src="image/임산부 상담결과.png" width="400"><br>
+  임산부 상담결과
+</td>
+</tr>
+</table>
+
 
 ## 🎯 주요 기능
 
